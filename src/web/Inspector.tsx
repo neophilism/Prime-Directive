@@ -3,7 +3,8 @@ import type {WorkspaceSnapshot,WorkerProfile,ActivityEvent} from '../domain/work
 import type {WorkNode} from '../domain/graph.ts';
 import type {Experience} from '../domain/experience.ts';
 import {getJSON} from './api.ts';
-export type Selection={type:'work'|'worker';id:string}|{type:'activity'|'workforce'|'names'}|null;
+export type {ViewSelection as Selection} from '../domain/preferences.ts';
+import type {ViewSelection as Selection} from '../domain/preferences.ts';
 export type CommandFn=(command:Record<string,unknown>)=>Promise<void>;
 const time=(value:string)=>new Date(value).toLocaleTimeString([],{hour:'2-digit',minute:'2-digit',second:'2-digit'});
 export function ActivityList({events,workers}: {events:ActivityEvent[];workers:WorkerProfile[]}) {
