@@ -1,0 +1,2970 @@
+{
+  "schemaVersion": 1,
+  "repository": "neophilism/Prime-Directive",
+  "roadmapVersion": 2,
+  "planVerified": true,
+  "plannedPrCount": 92,
+  "observedAt": "2026-10-25T03:30:00Z",
+  "units": [
+    {
+      "title": "Canonical ownership and architecture decisions",
+      "phase": "Foundation",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Audit existing engine and application contracts; decide canonical identity, directive, artifact, and workflow ownership. Record provider and deployment alternatives.",
+      "acceptance_criteria": [
+        "Document the read and write owner for every shared record.",
+        "Contract fixtures map existing project IDs without duplicating authority."
+      ],
+      "negative_test": "Reject an integration that gives two systems independent write authority over the same directive.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-001",
+      "legacyId": "PD001",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Repository foundation and work registry",
+      "phase": "Foundation",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Create the package boundaries, build pipeline, schema validation, and canonical registry adapter for stable development work IDs.",
+      "acceptance_criteria": [
+        "A clean checkout builds and runs smoke tests.",
+        "Registry counts derive from unique work IDs and distinguish acceptance from merging."
+      ],
+      "negative_test": "A duplicate work ID or cyclic dependency fails CI before merge.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-002",
+      "legacyId": "PD002",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-001"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Identity membership and administrative access",
+      "phase": "Foundation",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Integrate authenticated workspaces, roles, delegated access, session controls, and MFA for sensitive administration.",
+      "acceptance_criteria": [
+        "Owner, collaborator, observer, and connector principals have distinct scopes.",
+        "Revoked membership loses new access immediately at the authorization boundary."
+      ],
+      "negative_test": "A stale session cannot issue a mandate after its membership is revoked.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-003",
+      "legacyId": "PD003",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-002"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Transactional tenant isolation",
+      "phase": "Foundation",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Implement tenant-scoped tables, composite foreign keys, restricted runtime roles, and transaction-local context with pooling.",
+      "acceptance_criteria": [
+        "Positive and negative access tests cover every initial table.",
+        "A reused database connection cannot retain another tenant context."
+      ],
+      "negative_test": "An unscoped query and a cross-tenant foreign key are denied.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-004",
+      "legacyId": "PD004",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-003"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Private objects and source access",
+      "phase": "Foundation",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Add private object storage, scoped upload and download grants, hashes, quotas, and immutable object references.",
+      "acceptance_criteria": [
+        "Objects require tenant and source authorization.",
+        "An interrupted upload is either completed consistently or removed by cleanup."
+      ],
+      "negative_test": "Guessing another tenant object key or reusing an expired URL fails.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-005",
+      "legacyId": "PD005",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-003",
+        "PD-004"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Authority policy and stop contracts",
+      "phase": "Foundation",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Define mandates, approval binding, authorization epochs, domain controls, and tenant and directive stop states.",
+      "acceptance_criteria": [
+        "Policy decisions have typed inputs, reasons, and versions.",
+        "Descendants can narrow but cannot enlarge the prime directive authority."
+      ],
+      "negative_test": "A worker cannot approve its own extra budget, tools, or contact scope.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-006",
+      "legacyId": "PD006",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-003",
+        "PD-004"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Audit and redacted telemetry foundation",
+      "phase": "Foundation",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Create append-only operational events and correlated trace identifiers with field-level redaction.",
+      "acceptance_criteria": [
+        "Events link directive, task, run, and action IDs.",
+        "Ordinary roles cannot alter audit entries."
+      ],
+      "negative_test": "A seeded secret and contact body never appear in routine logs.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-007",
+      "legacyId": "PD007",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-004",
+        "PD-006"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Synthetic providers and evaluation harness",
+      "phase": "Foundation",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Build reproducible source, mailbox, calendar, model, and webhook simulators with controllable failures.",
+      "acceptance_criteria": [
+        "Tests run without live recipients or paid providers.",
+        "Fixtures simulate timeout, duplicate event, malformed output, and acceptance-before-crash."
+      ],
+      "negative_test": "An accidental live endpoint causes the test harness to fail closed.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-008",
+      "legacyId": "PD008",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-002",
+        "PD-007"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Document intake and provenance",
+      "phase": "Knowledge",
+      "owner_role": "Knowledge engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Ingest supported documents with original bytes, content hash, source owner, rights, classification, and version identity.",
+      "acceptance_criteria": [
+        "Repeat uploads deduplicate bytes without merging access rights.",
+        "Every parsed item points to its original version."
+      ],
+      "negative_test": "Unsupported, oversize, or truncated files remain quarantined with an actionable error.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-009",
+      "legacyId": "PD009",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-005",
+        "PD-008"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Isolated parsing and OCR",
+      "phase": "Knowledge",
+      "owner_role": "Knowledge engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Parse text, tables, page coordinates, and OCR in bounded sandbox jobs with extraction quality signals.",
+      "acceptance_criteria": [
+        "Critical tables and scanned fixtures preserve numbers and page references.",
+        "Low-quality extraction is marked for review."
+      ],
+      "negative_test": "An archive bomb, active document, or parser network request cannot escape the sandbox.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-010",
+      "legacyId": "PD010",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-009"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Source authority and classification",
+      "phase": "Knowledge",
+      "owner_role": "Knowledge engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Implement effective dates, access labels, approved public sources, confidential sources, and authority ordering.",
+      "acceptance_criteria": [
+        "Source versions retain history and permitted uses.",
+        "Public artifact compilation excludes confidential-only material."
+      ],
+      "negative_test": "A newer untrusted page cannot silently replace an approved primary source.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-011",
+      "legacyId": "PD011",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-009",
+        "PD-010",
+        "PD-006"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Claim evidence and conflict register",
+      "phase": "Knowledge",
+      "owner_role": "Knowledge engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Extract candidate claims, anchor evidence spans, record disputes, and manage reviewed claim status.",
+      "acceptance_criteria": [
+        "Critical claims have exact evidence references.",
+        "Conflicting amounts or dates stay unresolved until explicitly adjudicated."
+      ],
+      "negative_test": "A model summary alone cannot promote an unsupported claim to approved fact.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-012",
+      "legacyId": "PD012",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-010",
+        "PD-011"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Hybrid retrieval and reranking",
+      "phase": "Knowledge",
+      "owner_role": "Knowledge engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Combine exact and semantic search with source filters, recency rules, and relation-aware retrieval.",
+      "acceptance_criteria": [
+        "Meet the proposed critical-evidence recall target on the labeled corpus.",
+        "Retrieval reports omissions and confidence limitations."
+      ],
+      "negative_test": "Search and nearest-neighbor results cannot reveal unauthorized source snippets.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-013",
+      "legacyId": "PD013",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-011",
+        "PD-012"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Context compilation and immutable snapshots",
+      "phase": "Knowledge",
+      "owner_role": "Knowledge engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Assemble mandatory directive context, task evidence, restrictions, and unresolved questions under a token budget.",
+      "acceptance_criteria": [
+        "Every run can resolve its exact context manifest.",
+        "Truncation retains mandatory restrictions and declares missing background."
+      ],
+      "negative_test": "A summary cannot omit a confidentiality restriction to fit the token window.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-014",
+      "legacyId": "PD014",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-012",
+        "PD-013"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Source change invalidation",
+      "phase": "Knowledge",
+      "owner_role": "Knowledge engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Index source and claim dependencies across plans, artifacts, and pending actions; propagate changes.",
+      "acceptance_criteria": [
+        "A corrected claim marks all affected drafts stale.",
+        "Queued dependent actions lose eligibility until revalidated."
+      ],
+      "negative_test": "Updating a source after approval cannot leave its old queued message eligible.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-015",
+      "legacyId": "PD015",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-012",
+        "PD-014"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Knowledge quality and injection suite",
+      "phase": "Knowledge",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Test unknown facts, contradictory sources, multilingual content, malicious instructions, and inaccessible evidence.",
+      "acceptance_criteria": [
+        "Publish retrieval and claim-grounding reports by document type.",
+        "Injected text cannot change tool or policy authority."
+      ],
+      "negative_test": "A source telling an agent to export secrets produces no privileged external effect.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-016",
+      "legacyId": "PD016",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-010",
+        "PD-013",
+        "PD-014",
+        "PD-015",
+        "PD-008"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Prime directive intake and standing settings",
+      "phase": "Planning",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Build the primary instruction and document interface; derive success criteria and apply owner defaults.",
+      "acceptance_criteria": [
+        "A user can start with one directive and documents.",
+        "Ambiguous authority is shown as an exception while internal work can continue."
+      ],
+      "negative_test": "The interface cannot infer permission for unlimited spending from an ambitious outcome.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-017",
+      "legacyId": "PD017",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-006",
+        "PD-014",
+        "PD-016"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Outcome definitions and verification",
+      "phase": "Planning",
+      "owner_role": "Planning engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Model external outcomes, controllable outputs, baselines, evidence authorities, and unresolved completion states.",
+      "acceptance_criteria": [
+        "Outcome predicates have explicit verification contracts.",
+        "Activity counts and external achievements are displayed separately."
+      ],
+      "negative_test": "Sending an email or receiving interest cannot satisfy an executed-agreement outcome.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-018",
+      "legacyId": "PD018",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-017",
+        "PD-012"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Domain and action catalogs",
+      "phase": "Planning",
+      "owner_role": "Planning engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Define reusable task types, permitted action classes, commercial workflows, and factual civic workflows.",
+      "acceptance_criteria": [
+        "Domain restrictions propagate into descendant tasks.",
+        "Mixed-use directives require applicable controls at each action."
+      ],
+      "negative_test": "Relabeling political outreach as commercial does not enable personalized political persuasion.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-019",
+      "legacyId": "PD019",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-017",
+        "PD-006"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Candidate strategies and assumptions",
+      "phase": "Planning",
+      "owner_role": "Planning engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Generate bounded alternative plans with prerequisites, uncertainty, cost ranges, and explicit abandonment conditions.",
+      "acceptance_criteria": [
+        "Comparisons explain materially different routes.",
+        "A reviewer detects unsupported prerequisites and fabricated progress probabilities."
+      ],
+      "negative_test": "A directive with no feasible authorized route returns a reasoned blocked state.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-020",
+      "legacyId": "PD020",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-018",
+        "PD-019",
+        "PD-014"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Subdirective and microtask graph",
+      "phase": "Planning",
+      "owner_role": "Planning engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Implement recursive decomposition, cross-workstream dependencies, acceptance rules, and bounded graph depth.",
+      "acceptance_criteria": [
+        "Every microtask traces to a prime directive and contribution.",
+        "Execution dependencies are acyclic and graph revisions are immutable."
+      ],
+      "negative_test": "Circular dependencies, unbounded recursion, and orphan microtasks are rejected.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-021",
+      "legacyId": "PD021",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-020"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Cost estimation and atomic reservations",
+      "phase": "Planning",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Add budgets, rate-card versions, reservations, settlement, and upper bounds for admitted work.",
+      "acceptance_criteria": [
+        "Concurrent reservations cannot oversubscribe the configured bound.",
+        "Retries and fallback calls receive their own accounted capacity."
+      ],
+      "negative_test": "A crash or repeated settlement cannot double-release a reservation.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-022",
+      "legacyId": "PD022",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-021",
+        "PD-004"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Plan visibility and delegated activation",
+      "phase": "Planning",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Show subdirectives, assumptions, budgets, differences, and exceptions; activate permitted revisions under standing authority.",
+      "acceptance_criteria": [
+        "Routine plan changes within mandate do not demand repeated owner approval.",
+        "Expanded authority requires a concrete decision."
+      ],
+      "negative_test": "Editing an accepted plan cannot silently alter a running task context.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-023",
+      "legacyId": "PD023",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-021",
+        "PD-022",
+        "PD-006"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Shadow directive demonstration",
+      "phase": "Planning",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Demonstrate the complete internal planning cycle with synthetic execution and a simulated evidence change.",
+      "acceptance_criteria": [
+        "One directive produces validated work and a revised plan.",
+        "The run has reproducible inputs, costs, and evaluation evidence."
+      ],
+      "negative_test": "No simulated send can reach a real provider or recipient.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-024",
+      "legacyId": "PD024",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-016",
+        "PD-018",
+        "PD-019",
+        "PD-020",
+        "PD-021",
+        "PD-022",
+        "PD-023",
+        "PD-008"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Durable coordinator and workflow adapter",
+      "phase": "Execution",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Implement directive, workstream, and task workflows with deterministic orchestration and persisted references.",
+      "acceptance_criteria": [
+        "A stopped worker resumes without losing task state.",
+        "Workflow history contains references rather than large sensitive documents."
+      ],
+      "negative_test": "Replay cannot rerun nondeterministic model calls inside workflow logic.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-025",
+      "legacyId": "PD025",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-024",
+        "PD-001"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Bounded model worker runtime",
+      "phase": "Execution",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Run structured tasks through model adapters with token, time, call, child-task, and cost limits. Every run references a durable worker profile; ending a run never deletes the worker identity or reviewed experience.",
+      "acceptance_criteria": [
+        "Runs terminate with typed success, partial, failure, or escalation results.",
+        "Provider and prompt versions are recorded."
+      ],
+      "negative_test": "Malformed output or repeated refusal cannot trigger an infinite repair loop.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-026",
+      "legacyId": "PD026",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-025",
+        "PD-014",
+        "PD-022"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Fair scheduling leases and fencing",
+      "phase": "Execution",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Admit ready tasks by capacity, priority, and tenant fairness; enforce lease expiry and fencing tokens.",
+      "acceptance_criteria": [
+        "Waiting work releases compute and unrelated work continues.",
+        "Only the current lease holder can commit results."
+      ],
+      "negative_test": "A slow worker cannot write after its lease is reassigned.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-027",
+      "legacyId": "PD027",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-025",
+        "PD-026",
+        "PD-022"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Capability tool gateway",
+      "phase": "Execution",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Validate scoped tool requests and issue narrow execution capabilities without exposing credentials to models.",
+      "acceptance_criteria": [
+        "Every tool call has a policy decision and credential binding.",
+        "Read and write tool capabilities are separable."
+      ],
+      "negative_test": "An inbound document cannot install a tool or redirect a secret-bearing request.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-028",
+      "legacyId": "PD028",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-026",
+        "PD-006",
+        "PD-007"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Action ledger outbox and reconciliation",
+      "phase": "Execution",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Implement transactional action admission, stable identities, outbox dispatch, receipts, and unknown states.",
+      "acceptance_criteria": [
+        "Replay does not create avoidable duplicate side effects.",
+        "Ambiguous acceptance is reconciled or held for review."
+      ],
+      "negative_test": "A crash after provider acceptance never causes blind non-idempotent resubmission.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-029",
+      "legacyId": "PD029",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-028",
+        "PD-022",
+        "PD-004"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Final authorization and revocation",
+      "phase": "Execution",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Check current mandate, epoch, source freshness, plan, suppression, and budget at the connector boundary.",
+      "acceptance_criteria": [
+        "Revocation blocks new dispatch decisions after its committed state.",
+        "The interface lists operations already in flight."
+      ],
+      "negative_test": "A stale approval cannot authorize a changed attachment, recipient scope, or claim.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-030",
+      "legacyId": "PD030",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-029",
+        "PD-015",
+        "PD-006"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Automatic replanning and result reconciliation",
+      "phase": "Execution",
+      "owner_role": "Planning engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Adopt bounded plan revisions, reconcile running tasks, preserve commitments, and reject obsolete results.",
+      "acceptance_criteria": [
+        "New subdirectives can be created within the root mandate.",
+        "Superseded work cannot overwrite current accepted state."
+      ],
+      "negative_test": "Two simultaneous replans cannot activate incompatible current versions.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-031",
+      "legacyId": "PD031",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-025",
+        "PD-021",
+        "PD-023",
+        "PD-030"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Execution failure and recovery gate",
+      "phase": "Execution",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Exercise crash, timeout, cancellation, duplicate-event, spend, and revocation races end to end.",
+      "acceptance_criteria": [
+        "Every required fault has an auditable terminal or waiting state.",
+        "The authorization and duplicate-action invariants pass."
+      ],
+      "negative_test": "A paused directive with queued and in-flight work reports both correctly without claiming recall.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-032",
+      "legacyId": "PD032",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-025",
+        "PD-026",
+        "PD-027",
+        "PD-028",
+        "PD-029",
+        "PD-030",
+        "PD-031",
+        "PD-008"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Organizations contacts and reversible identity",
+      "phase": "Communications",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Create tenant-scoped organizations, people, aliases, role histories, and confidence-based merge proposals.",
+      "acceptance_criteria": [
+        "Every contact identity has provenance and timestamps.",
+        "Incorrect merges can be reversed without losing conversations."
+      ],
+      "negative_test": "Two people with identical names are not automatically merged.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-033",
+      "legacyId": "PD033",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-011",
+        "PD-004",
+        "PD-032"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Commercial relevance discovery",
+      "phase": "Communications",
+      "owner_role": "Planning engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Research published business focus and explain company or investor fit using permitted sources.",
+      "acceptance_criteria": [
+        "Fit, identity confidence, eligibility, and readiness are separate.",
+        "Recommended matches expose supporting evidence."
+      ],
+      "negative_test": "A high fit score cannot authorize contact or enable political susceptibility ranking.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-034",
+      "legacyId": "PD034",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-033",
+        "PD-013",
+        "PD-019"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Contact permissions and suppression",
+      "phase": "Communications",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Record consent or configured channel basis, recipient preferences, jurisdiction, retention, and tenant-wide suppression.",
+      "acceptance_criteria": [
+        "Suppression updates are checked at dispatch.",
+        "Purpose or role changes trigger eligibility review."
+      ],
+      "negative_test": "An unsubscribed contact cannot reenter through another workstream or verified channel alias.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-035",
+      "legacyId": "PD035",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-033",
+        "PD-006"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "First mailbox read and draft adapter",
+      "phase": "Communications",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Integrate one selected provider using narrow OAuth scopes, verified sender identity, threaded reads, and drafts.",
+      "acceptance_criteria": [
+        "Provider contract fixtures cover authentication renewal and message threading.",
+        "Read-only mode can operate without send permission."
+      ],
+      "negative_test": "A revoked token fails closed and does not fall back to another sender identity.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-036",
+      "legacyId": "PD036",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-028",
+        "PD-035"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Authorized email dispatch",
+      "phase": "Communications",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Implement provider send, recipient locks, quota reservation, receipts, and provider-specific ambiguous-result handling.",
+      "acceptance_criteria": [
+        "A reviewed pilot action can be sent and reconciled once.",
+        "Message headers and attachments match the authorized artifact."
+      ],
+      "negative_test": "Two agents cannot start duplicate sequences for the same tenant relationship.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-037",
+      "legacyId": "PD037",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-029",
+        "PD-030",
+        "PD-035",
+        "PD-036"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Replies followups and human handoff",
+      "phase": "Communications",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Ingest replies and provider events, pause obsolete follow-ups, classify administrative events, and create bounded tasks.",
+      "acceptance_criteria": [
+        "Reply arrival and unsubscribe immediately affect next-step eligibility.",
+        "A handoff suspends conflicting agent negotiation."
+      ],
+      "negative_test": "A late webhook or out-of-order reply cannot restart a completed sequence.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-038",
+      "legacyId": "PD038",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-037"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Calendar and promise tracking",
+      "phase": "Communications",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Propose meetings, reconcile attendee acknowledgments, manage time zones, and track follow-up commitments.",
+      "acceptance_criteria": [
+        "Invitations and confirmed meetings have different states.",
+        "Calendar changes preserve history and recipient acknowledgment."
+      ],
+      "negative_test": "A daylight-saving transition or ambiguous time zone cannot silently schedule the wrong time.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-039",
+      "legacyId": "PD039",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-038",
+        "PD-028"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Sender health and channel operations",
+      "phase": "Communications",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Add authentication checks, bounce and complaint monitoring, quotas, quiet hours, and automatic channel suspension.",
+      "acceptance_criteria": [
+        "Operators can identify why sending is blocked.",
+        "Unhealthy sending stops under configured thresholds."
+      ],
+      "negative_test": "Worker scaling or alternate domains cannot bypass a sender suppression or provider restriction.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-040",
+      "legacyId": "PD040",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-037",
+        "PD-038",
+        "PD-007"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Evidence grounded writing and review",
+      "phase": "Private alpha",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Generate briefs, explanations, correspondence, and FAQs with claim links and editorial review states.",
+      "acceptance_criteria": [
+        "Material public claims have reviewable source anchors.",
+        "Unknown or contested claims remain qualified."
+      ],
+      "negative_test": "A writer cannot invent a statistic, endorsement, credential, or prior relationship.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-041",
+      "legacyId": "PD041",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-012",
+        "PD-014",
+        "PD-015",
+        "PD-028"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Document deck and asset adapters",
+      "phase": "Private alpha",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Create reusable document, deck, and image production adapters with versioned outputs and rights metadata.",
+      "acceptance_criteria": [
+        "Outputs render and preserve source qualifications.",
+        "Assets retain attribution and use restrictions."
+      ],
+      "negative_test": "An unlicensed or confidential asset cannot enter a public release package.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-042",
+      "legacyId": "PD042",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-041",
+        "PD-005"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Website previews and controlled publication",
+      "phase": "Private alpha",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Generate approved-template sites and forms, isolate builds, and publish immutable versions through the action gateway.",
+      "acceptance_criteria": [
+        "Preview, content review, accessibility, and release records are linked.",
+        "Rollback changes the published release pointer."
+      ],
+      "negative_test": "Generated code cannot read production secrets or add an unauthorized data collector.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-043",
+      "legacyId": "PD043",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-041",
+        "PD-028",
+        "PD-030"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Artifact approval and correction propagation",
+      "phase": "Private alpha",
+      "owner_role": "Knowledge engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Bind approval to artifact versions and propagate source updates into drafts, queued sends, and publication corrections.",
+      "acceptance_criteria": [
+        "Editing a material claim invalidates affected approval.",
+        "Released inaccuracies create traceable correction tasks."
+      ],
+      "negative_test": "A stale deck URL cannot silently resolve to a newly changed confidential version.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-044",
+      "legacyId": "PD044",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-041",
+        "PD-042",
+        "PD-043",
+        "PD-015"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Prime directive dashboard and decision inbox",
+      "phase": "Private alpha",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Deliver the visual directive canvas as the primary operator experience, with workers, evidence inspectors, grouped exceptions, spending and stop controls. Text lists are an accessible alternative.",
+      "acceptance_criteria": [
+        "An owner can explain current progress and next work from the overview.",
+        "A concrete exception can be resolved without reconstructing agent transcripts."
+      ],
+      "negative_test": "An unresolved action cannot be displayed as a successful external outcome.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-045",
+      "legacyId": "PD045",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-023",
+        "PD-031",
+        "PD-038",
+        "PD-039",
+        "PD-040",
+        "PD-044",
+        "PD-087",
+        "PD-089"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Commercial end to end acceptance",
+      "phase": "Private alpha",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Run a synthetic company-to-conversation scenario including source revision and bounded automatic replanning.",
+      "acceptance_criteria": [
+        "One directive manages all subdirectives without manual task creation.",
+        "Evidence, authority, and actual costs reconcile across the workflow."
+      ],
+      "negative_test": "A reply containing an instruction to export private documents has no such effect.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-046",
+      "legacyId": "PD046",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-034",
+        "PD-035",
+        "PD-037",
+        "PD-038",
+        "PD-039",
+        "PD-044",
+        "PD-045",
+        "PD-008"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Private alpha security review",
+      "phase": "Private alpha",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Test tenant boundaries, document attacks, generated-code isolation, credential handling, and commit-time races.",
+      "acceptance_criteria": [
+        "All critical invariant tests pass and findings are resolved or release-blocking.",
+        "Review records identify the tested release and environment."
+      ],
+      "negative_test": "Cross-tenant retrieval, SSRF, stale approval, and duplicate sends cannot pass unnoticed.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-047",
+      "legacyId": "PD047",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-016",
+        "PD-032",
+        "PD-040",
+        "PD-043",
+        "PD-045",
+        "PD-046"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Controlled private alpha release",
+      "phase": "Private alpha",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Deploy the limited release with backup verification, incident runbooks, feature flags, and a bounded owner pilot.",
+      "acceptance_criteria": [
+        "The approved sender, channel, scope, and spending envelope are explicit.",
+        "Restore and stop-control drills pass before live dispatch."
+      ],
+      "negative_test": "Unconfigured domains, channels, or jurisdictions remain unavailable for external execution.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-048",
+      "legacyId": "PD048",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-046",
+        "PD-047"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Investment preparation and diligence workflow",
+      "phase": "Domain capability",
+      "owner_role": "Planning engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Add readiness assessment, evidence rooms, professional fit research, diligence question tracking, and commitment verification.",
+      "acceptance_criteria": [
+        "Shared diligence materials obey recipient permissions.",
+        "Interest, meetings, nonbinding indications, and verified commitments stay distinct."
+      ],
+      "negative_test": "An agent cannot bind financing terms or invent an investment commitment.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-049",
+      "legacyId": "PD049",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-048"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Official civic procedure and status monitoring",
+      "phase": "Domain capability",
+      "owner_role": "Planning engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Ingest official procedural records with source versions, deadlines, uncertainty, and neutral status updates.",
+      "acceptance_criteria": [
+        "Milestones link to authoritative evidence and observed timestamps.",
+        "Unavailable official data remains unknown."
+      ],
+      "negative_test": "A news headline or model prediction cannot certify legislative enactment.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-050",
+      "legacyId": "PD050",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-048",
+        "PD-019",
+        "PD-018"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Public explanations and voluntary coalition tools",
+      "phase": "Domain capability",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Provide factual language and reading-level variants, common statements, opt-in petitions, consent versions, and withdrawals.",
+      "acceptance_criteria": [
+        "Variants retain facts, qualifications, and source references.",
+        "Public endorsements require verified permission and organizational authority where claimed."
+      ],
+      "negative_test": "A profile of an individual or demographic group cannot drive automated political persuasion.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-051",
+      "legacyId": "PD051",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-050",
+        "PD-043",
+        "PD-044",
+        "PD-035"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Public communications and media workflow",
+      "phase": "Domain capability",
+      "owner_role": "Planning engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Build canonical briefs, public press rooms, commercial media relevance research, and factual correction tracking.",
+      "acceptance_criteria": [
+        "Public assets maintain consistent claims across formats.",
+        "Political public materials stay within the civic action catalog."
+      ],
+      "negative_test": "A fabricated quote, media relationship, or targeted political pitch cannot pass the workflow gate.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-052",
+      "legacyId": "PD052",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-048",
+        "PD-041",
+        "PD-034"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Locales and jurisdiction configuration",
+      "phase": "Domain capability",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Add locale-aware formatting, reviewed translations, data region constraints, and versioned country-channel policy packs.",
+      "acceptance_criteria": [
+        "The active policy pack and language review are visible.",
+        "Unsupported combinations stay draft-only."
+      ],
+      "negative_test": "Translation cannot alter a number, legal qualification, or recipient permission.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-053",
+      "legacyId": "PD053",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-035",
+        "PD-039",
+        "PD-051"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Multimedia production and rights",
+      "phase": "Domain capability",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Add audio and video jobs with scripts, captions, licensing, identity consent, previews, and generation budgets.",
+      "acceptance_criteria": [
+        "Final media matches the approved script and carries required rights records.",
+        "Long generation jobs can resume or terminate cleanly."
+      ],
+      "negative_test": "An unauthorized real-person voice or implied endorsement is rejected.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-054",
+      "legacyId": "PD054",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-042",
+        "PD-044",
+        "PD-052"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Bounded commercial advertising adapter",
+      "phase": "Domain capability",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Implement one commercial ad platform in sandbox first with approved creative, audience eligibility, and spend reconciliation.",
+      "acceptance_criteria": [
+        "Provider-specific budget behavior and stop latency are documented.",
+        "Only explicitly authorized commercial campaigns can run."
+      ],
+      "negative_test": "Political ad purchasing, unapproved spend expansion, and policy-evasion retries are blocked.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-055",
+      "legacyId": "PD055",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-053",
+        "PD-054",
+        "PD-022",
+        "PD-030"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Domain workflow acceptance gate",
+      "phase": "Domain capability",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Verify each domain template and connector against its permitted actions, claims, eligibility, and outcome semantics.",
+      "acceptance_criteria": [
+        "Every enabled domain has positive and negative scenario evidence.",
+        "Published templates include explicit version and capability requirements."
+      ],
+      "negative_test": "Switching domains cannot retain a capability denied in the destination domain.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-056",
+      "legacyId": "PD056",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-049",
+        "PD-050",
+        "PD-051",
+        "PD-052",
+        "PD-053",
+        "PD-054",
+        "PD-055"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Outcome evidence ingestion",
+      "phase": "Adaptive beta",
+      "owner_role": "Planning engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Normalize external observations and owner confirmations into typed evidence with provenance and confidence.",
+      "acceptance_criteria": [
+        "Observed facts remain separate from model interpretations.",
+        "Evidence can be corrected without erasing history."
+      ],
+      "negative_test": "A provider acceptance receipt cannot become a delivery, reply, or agreement event.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-057",
+      "legacyId": "PD057",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-056",
+        "PD-018",
+        "PD-038"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Commercial experiments and uncertainty",
+      "phase": "Adaptive beta",
+      "owner_role": "Planning engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Add bounded approved commercial comparisons, hypothesis tracking, stopping rules, and uncertainty displays.",
+      "acceptance_criteria": [
+        "Experiment allocation and measures are auditable.",
+        "Reports disclose small samples and missing causal evidence."
+      ],
+      "negative_test": "No experiment optimizes political susceptibility or misrepresents correlation as causation.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-058",
+      "legacyId": "PD058",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-057",
+        "PD-020"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Evidence driven strategy revision",
+      "phase": "Adaptive beta",
+      "owner_role": "Planning engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Trigger limited replanning from verified changes, stalled progress, and budget conditions while retaining commitments.",
+      "acceptance_criteria": [
+        "Revisions explain new evidence and proposed task changes.",
+        "Owner interruptions are limited to genuine authority exceptions."
+      ],
+      "negative_test": "A noisy metric cannot spawn an unbounded sequence of expensive revisions.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-059",
+      "legacyId": "PD059",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-057",
+        "PD-058",
+        "PD-031"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Evaluated model routing and fallback",
+      "phase": "Adaptive beta",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Compare model-role combinations, pin evaluation versions, and route work by demonstrated quality and cost.",
+      "acceptance_criteria": [
+        "Fallback meets the same privacy and capability contract.",
+        "Changes pass regression cases before promotion."
+      ],
+      "negative_test": "Provider failure cannot silently downgrade a task below its required quality or region restrictions.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-060",
+      "legacyId": "PD060",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-026",
+        "PD-016",
+        "PD-056"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Cost ledger and owner controls",
+      "phase": "Adaptive beta",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Expose estimated, reserved, accrued, and reconciled spending by directive, workstream, model, and connector.",
+      "acceptance_criteria": [
+        "Displayed totals reconcile with task usage and provider evidence.",
+        "Changing a ceiling affects subsequent admissions."
+      ],
+      "negative_test": "A hidden retry, fallback, or media generation charge cannot disappear from accounting.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-061",
+      "legacyId": "PD061",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-022",
+        "PD-057",
+        "PD-060"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Operational traces and incident views",
+      "phase": "Adaptive beta",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Add queue, model, action, claim freshness, and decision backlog dashboards with redacted trace links.",
+      "acceptance_criteria": [
+        "A failed outcome can be traced to relevant runs and external events.",
+        "Alerts have owners and concrete runbook actions."
+      ],
+      "negative_test": "A shared dashboard cannot disclose another tenant source content or recipient identity.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-062",
+      "legacyId": "PD062",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-007",
+        "PD-057",
+        "PD-061"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Evaluation regression and release controls",
+      "phase": "Adaptive beta",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Gate prompt, model, tool, schema, and policy changes through the versioned evaluation suite and rollout process.",
+      "acceptance_criteria": [
+        "Every release identifies its evaluation baseline and changes.",
+        "A critical regression blocks external capability rollout."
+      ],
+      "negative_test": "A passing aggregate score cannot hide a failed isolation or authorization invariant.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-063",
+      "legacyId": "PD063",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-016",
+        "PD-047",
+        "PD-056",
+        "PD-059",
+        "PD-060",
+        "PD-062"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Adaptive beta and usability gate",
+      "phase": "Adaptive beta",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Run beta capacity, accessibility, and owner-workload studies with bounded real pilot directives.",
+      "acceptance_criteria": [
+        "Measure setup success, decision burden, and useful outcomes.",
+        "Beta load and response-time objectives have reproducible reports."
+      ],
+      "negative_test": "Growing decision backlog triggers a product correction rather than more autonomous external activity.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-064",
+      "legacyId": "PD064",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-059",
+        "PD-061",
+        "PD-062",
+        "PD-063"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Tenant fairness and capacity scaling",
+      "phase": "Scale and operations",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Scale worker pools and partition hot queues while preserving budget, rate, and authorization controls.",
+      "acceptance_criteria": [
+        "Declared beta and scale-test envelopes have measured queue stability.",
+        "One tenant cannot starve others."
+      ],
+      "negative_test": "A hot tenant or large graph cannot bypass per-tenant admission quotas.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-065",
+      "legacyId": "PD065",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-064",
+        "PD-027"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Workflow history and deployment compatibility",
+      "phase": "Scale and operations",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Implement bounded histories, continuation, long-running workflow upgrades, and controlled worker rollout.",
+      "acceptance_criteria": [
+        "Old workflows survive code deployment without losing action identity.",
+        "History size remains bounded in long simulations."
+      ],
+      "negative_test": "A replay incompatibility blocks rollout instead of resetting the directive.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-066",
+      "legacyId": "PD066",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-065",
+        "PD-025"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Search graph and database performance",
+      "phase": "Scale and operations",
+      "owner_role": "Knowledge engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Tune indexes, pagination, graph traversal, caches, and archival against representative tenant distributions.",
+      "acceptance_criteria": [
+        "Critical retrieval quality is preserved under load.",
+        "Large organizations and directive trees remain paginated and bounded."
+      ],
+      "negative_test": "Performance optimization cannot omit tenant filters or mandatory evidence.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-067",
+      "legacyId": "PD067",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-065",
+        "PD-013",
+        "PD-033"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Disaster recovery and restore rehearsal",
+      "phase": "Scale and operations",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Exercise point-in-time restore, object recovery, key access, and reconciliation of externally committed actions.",
+      "acceptance_criteria": [
+        "Meet or explicitly revise the proposed recovery targets with evidence.",
+        "A restored environment starts with external dispatch paused."
+      ],
+      "negative_test": "Restoration cannot replay previously sent actions as new work.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-068",
+      "legacyId": "PD068",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-066",
+        "PD-067",
+        "PD-048"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Retention access and deletion lifecycle",
+      "phase": "Scale and operations",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Implement export, subject-access support, deletion propagation, backup tombstones, and minimal suppression retention.",
+      "acceptance_criteria": [
+        "Derived indexes and caches follow source deletion.",
+        "Restored backups replay deletion obligations before serving data."
+      ],
+      "negative_test": "Deleting a contact cannot accidentally re-enable unwanted contact through a stale index.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-069",
+      "legacyId": "PD069",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-068",
+        "PD-035",
+        "PD-005"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Regional eligibility and deployment boundaries",
+      "phase": "Scale and operations",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Bind tenants and data classes to approved regions, model endpoints, storage, and support-access policies.",
+      "acceptance_criteria": [
+        "Routing respects region eligibility during normal and degraded operation.",
+        "Regional enablement requires a verified provider configuration."
+      ],
+      "negative_test": "An outage cannot cause an unapproved cross-region model or storage fallback.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-070",
+      "legacyId": "PD070",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-053",
+        "PD-068",
+        "PD-069"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Connector SDK and extension sandbox",
+      "phase": "Scale and operations",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Publish versioned adapter contracts, test fixtures, capability manifests, signing, and installation review.",
+      "acceptance_criteria": [
+        "A new connector passes authentication, limits, reconciliation, and permission tests.",
+        "Owners see requested capabilities before installation."
+      ],
+      "negative_test": "A malicious extension cannot obtain broader credentials or execute arbitrary host code.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-071",
+      "legacyId": "PD071",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-028",
+        "PD-040",
+        "PD-066",
+        "PD-070"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Portfolio scale and chaos gate",
+      "phase": "Scale and operations",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Run sustained mixed workloads with provider outages, queue pressure, lost workers, and delayed webhooks.",
+      "acceptance_criteria": [
+        "No required authorization, budget, or isolation invariant fails.",
+        "Recovery and degraded-mode behavior are documented with measurements."
+      ],
+      "negative_test": "Simultaneous failures cannot convert unknown actions into automatic repeated sends.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-072",
+      "legacyId": "PD072",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-065",
+        "PD-066",
+        "PD-067",
+        "PD-068",
+        "PD-069",
+        "PD-070",
+        "PD-071"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Superintelligence Engine production integration",
+      "phase": "Portfolio and launch",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Bind verified engine capabilities to the adapter contracts and remove any transitional duplicate authority.",
+      "acceptance_criteria": [
+        "Canonical identities and artifact permissions are preserved end to end.",
+        "Contract tests run against the actual selected engine release."
+      ],
+      "negative_test": "An engine permission change cannot leave a stale grant active in The Prime Directive.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-073",
+      "legacyId": "PD073",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-001",
+        "PD-072"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Command Center product integration",
+      "phase": "Portfolio and launch",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Expose prime directive intake and work views inside Command Center with dedicated routes and consistent session scope.",
+      "acceptance_criteria": [
+        "Both entry points read the same canonical directive state.",
+        "Deep links retain access checks and useful navigation."
+      ],
+      "negative_test": "A second UI cannot activate a stale plan or display an unauthorized artifact.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-074",
+      "legacyId": "PD074",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-073",
+        "PD-045"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Boardroom development coordination",
+      "phase": "Portfolio and launch",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Map planned work, dependencies, evidence, and repository ownership into the development coordination interface.",
+      "acceptance_criteria": [
+        "Assignment respects established repository ownership rules.",
+        "Blocked work and independent next work remain visible."
+      ],
+      "negative_test": "A development assignment cannot issue a production outreach mandate.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-075",
+      "legacyId": "PD075",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-002",
+        "PD-073"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Engine Room live portfolio reporting",
+      "phase": "Portfolio and launch",
+      "owner_role": "Integration engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Map the backlog to the verified canonical registry and connect live PR, acceptance, deployment, and health evidence.",
+      "acceptance_criteria": [
+        "Progress updates derive from live evidence and stable unit IDs.",
+        "Multiple PRs for one unit do not inflate the denominator."
+      ],
+      "negative_test": "A merged but unaccepted or undeployed unit cannot be shown as fully complete.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-076",
+      "legacyId": "PD076",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-002",
+        "PD-075"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Portable export import and migration",
+      "phase": "Portfolio and launch",
+      "owner_role": "Platform engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Export directives, source manifests, permissions, artifacts, and event references with versioned migration support.",
+      "acceptance_criteria": [
+        "Round-trip fixtures preserve relationships and evidence identity.",
+        "Secrets are omitted and imported external execution begins paused."
+      ],
+      "negative_test": "Importing a mandate cannot grant authority issued by an unrelated tenant or owner.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-077",
+      "legacyId": "PD077",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-069",
+        "PD-073",
+        "PD-074"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Pilot evidence and operating playbooks",
+      "phase": "Portfolio and launch",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Complete commercial and factual civic pilots, document owner workload, costs, useful outcomes, and unresolved limits.",
+      "acceptance_criteria": [
+        "Pilot results include unfavorable and inconclusive outcomes.",
+        "Each launch capability has a user-facing operating playbook."
+      ],
+      "negative_test": "The launch report cannot count activity as success or omit a material pilot failure.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-078",
+      "legacyId": "PD078",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-064",
+        "PD-072",
+        "PD-074",
+        "PD-076",
+        "PD-077"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "Release and supply chain assurance",
+      "phase": "Portfolio and launch",
+      "owner_role": "Reliability and assurance engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Review dependency provenance, images, secret handling, restore evidence, release artifacts, and open findings.",
+      "acceptance_criteria": [
+        "All critical acceptance evidence applies to the release candidate.",
+        "Rollback, pause, and incident exercises pass."
+      ],
+      "negative_test": "An unreviewed dependency or unresolved critical finding blocks the affected release capability.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-079",
+      "legacyId": "PD079",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-078",
+        "PD-063"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "title": "General availability and measured expansion",
+      "phase": "Portfolio and launch",
+      "owner_role": "Application engineer",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "scope": "Roll out gradually with bounded tenants, channel eligibility, capacity alarms, support ownership, and staged expansion criteria.",
+      "acceptance_criteria": [
+        "Production smoke checks reconcile a permitted test workflow end to end.",
+        "Capacity and new-channel expansion require measured evidence."
+      ],
+      "negative_test": "A failed health or invariant check halts rollout and suspends affected external execution.",
+      "evidence_required": [
+        "Relevant automated test results",
+        "Contract and operational documentation changes",
+        "Reviewer acceptance linked to the work ID"
+      ],
+      "external_execution_allowed_by_this_unit": false,
+      "id": "PD-080",
+      "legacyId": "PD080",
+      "origin": "original",
+      "prs": [],
+      "contributingPrs": [],
+      "dependsOn": [
+        "PD-079"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": []
+    },
+    {
+      "id": "PD-081",
+      "title": "Visual graph domain and projection",
+      "origin": "addition",
+      "phase": "Visual workforce",
+      "dependsOn": [
+        "PD-002"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": [],
+      "prs": [],
+      "contributingPrs": [],
+      "owner_role": "Application and platform engineering",
+      "scope": "Model the prime directive, nested subdirectives, tasks, dependencies, evidence, and worker attachments; provide deterministic hierarchical layout and collapse projections.",
+      "acceptance_criteria": [
+        "Cycles, duplicate IDs, orphan nodes and illegal state transitions are rejected.",
+        "Projection preserves stable IDs and distinguishes hierarchy, dependency and assignment edges."
+      ],
+      "negative_test": "A collapsed subtree cannot make its active workers appear attached to the wrong task.",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "external_execution_allowed_by_this_unit": false
+    },
+    {
+      "id": "PD-082",
+      "title": "Persistent worker identity and run lifecycle",
+      "origin": "addition",
+      "phase": "Visual workforce",
+      "dependsOn": [
+        "PD-081"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": [],
+      "prs": [],
+      "contributingPrs": [],
+      "owner_role": "Application and platform engineering",
+      "scope": "Persist worker profiles independently of transient runs; implement atomic assignment, retirement, task release, and restart recovery in a local reference store.",
+      "acceptance_criteria": [
+        "A worker retains ID, profile and history after process restart and across tasks.",
+        "A worker and a task each have at most one active assignment in the initial runtime."
+      ],
+      "negative_test": "Two concurrent assignments cannot claim the same worker or task.",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "external_execution_allowed_by_this_unit": false
+    },
+    {
+      "id": "PD-083",
+      "title": "Boardroom name catalog and availability adapter",
+      "origin": "addition",
+      "phase": "Visual workforce",
+      "dependsOn": [
+        "PD-002"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": [],
+      "prs": [],
+      "contributingPrs": [],
+      "owner_role": "Application and platform engineering",
+      "scope": "Reuse the exact source-pinned catalog; filter active credentials, reserved names, logical-agent occupancy and Prime Directive claims from authenticated inventory.",
+      "acceptance_criteria": [
+        "Exact case and punctuation are preserved and all occupancy sources are excluded.",
+        "Unavailable, incomplete or stale inventory returns unknown availability and prevents allocation."
+      ],
+      "negative_test": "A public catalog or partial inventory cannot be treated as proof that a name is unused.",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "external_execution_allowed_by_this_unit": false
+    },
+    {
+      "id": "PD-084",
+      "title": "Shared atomic name reservation integration",
+      "origin": "addition",
+      "phase": "Visual workforce",
+      "dependsOn": [
+        "PD-082",
+        "PD-083"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": [
+        "Authenticated Boardroom occupancy source and shared atomic name authority used by both applications are implemented and configured."
+      ],
+      "prs": [],
+      "contributingPrs": [],
+      "owner_role": "Application and platform engineering",
+      "scope": "Integrate an owner-scoped shared name authority used by both applications; reserve and bind names atomically, reconcile conflicts, and support retirement and explicit release.",
+      "acceptance_criteria": [
+        "Simultaneous Boardroom and Prime Directive claims yield exactly one winner.",
+        "A lost response reconciles by idempotent claim identity; neither application bypasses the authority."
+      ],
+      "negative_test": "Snapshot-then-insert races cannot create two active owners of a name.",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "external_execution_allowed_by_this_unit": false
+    },
+    {
+      "id": "PD-085",
+      "title": "Reviewed experience and reusable worker memory",
+      "origin": "addition",
+      "phase": "Visual workforce",
+      "dependsOn": [
+        "PD-082"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": [],
+      "prs": [],
+      "contributingPrs": [],
+      "owner_role": "Application and platform engineering",
+      "scope": "Record accepted and rejected task outcomes by specialty, with evidence, reviewer, source versions and memory status; support revocation and expiry.",
+      "acceptance_criteria": [
+        "Repeated receipt of the same evaluation cannot add duplicate experience.",
+        "Only reviewed, current, permitted memory is returned to later tasks; identity survives memory deletion."
+      ],
+      "negative_test": "A worker cannot promote its own unreviewed assertion or another workspace secret into reusable memory.",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "external_execution_allowed_by_this_unit": false
+    },
+    {
+      "id": "PD-086",
+      "title": "Experience-aware assignment and skill evaluation",
+      "origin": "addition",
+      "phase": "Visual workforce",
+      "dependsOn": [
+        "PD-085",
+        "PD-027"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": [],
+      "prs": [],
+      "contributingPrs": [],
+      "owner_role": "Application and platform engineering",
+      "scope": "Route eligible tasks using evaluated specialty performance, availability, cost and diversity; compare against baseline routing with minimum evidence and uncertainty.",
+      "acceptance_criteria": [
+        "Task volume alone cannot confer expertise or increase tool authority.",
+        "Revoked or stale evaluations stop influencing assignment and model upgrades trigger reevaluation."
+      ],
+      "negative_test": "One positive outcome cannot imply universal expertise or automatically train shared model weights.",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "external_execution_allowed_by_this_unit": false
+    },
+    {
+      "id": "PD-087",
+      "title": "Interactive directive canvas and inspectors",
+      "origin": "addition",
+      "phase": "Visual workforce",
+      "dependsOn": [
+        "PD-081"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": [],
+      "prs": [],
+      "contributingPrs": [],
+      "owner_role": "Application and platform engineering",
+      "scope": "Build the primary visual interface with left-to-right and top-down layouts, zoom, pan, collapse, task selection, progress, evidence and worker detail panels.",
+      "acceptance_criteria": [
+        "Every graph item can be opened by mouse or keyboard and has a readable detail panel.",
+        "The root remains identifiable and layout changes preserve selection and hierarchy."
+      ],
+      "negative_test": "A graph with several nested levels cannot overlap cards or hide essential completion criteria.",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "external_execution_allowed_by_this_unit": false
+    },
+    {
+      "id": "PD-088",
+      "title": "Animated worker movement and task attachment",
+      "origin": "addition",
+      "phase": "Visual workforce",
+      "dependsOn": [
+        "PD-082",
+        "PD-087"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": [],
+      "prs": [],
+      "contributingPrs": [],
+      "owner_role": "Application and platform engineering",
+      "scope": "Render workers as separate selectable nodes whose movement and attachment follow assignment events; support stacked workers, pause and reduced motion.",
+      "acceptance_criteria": [
+        "Observed assignment and release events move the same persistent worker identity.",
+        "Animation can be disabled without losing assignment, state or activity information."
+      ],
+      "negative_test": "Animation cannot display work, progress or success without a corresponding event.",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "external_execution_allowed_by_this_unit": false
+    },
+    {
+      "id": "PD-089",
+      "title": "Safe live activity and resumable event projection",
+      "origin": "addition",
+      "phase": "Visual workforce",
+      "dependsOn": [
+        "PD-082",
+        "PD-081"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": [],
+      "prs": [],
+      "contributingPrs": [],
+      "owner_role": "Application and platform engineering",
+      "scope": "Stream typed activity summaries, tool stages, evidence references and uncertainty with resumable cursors, replay deduplication and disconnected state.",
+      "acceptance_criteria": [
+        "Events survive reconnect and restart without duplicating progress.",
+        "The public event schema excludes raw reasoning, prompts, secrets and unrestricted tool output."
+      ],
+      "negative_test": "Out-of-order events, unknown fields, tenant mismatch and slow subscribers cannot corrupt state or leak private context.",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "external_execution_allowed_by_this_unit": false
+    },
+    {
+      "id": "PD-090",
+      "title": "Historical graph replay and plan comparison",
+      "origin": "addition",
+      "phase": "Visual workforce",
+      "dependsOn": [
+        "PD-089",
+        "PD-031"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": [],
+      "prs": [],
+      "contributingPrs": [],
+      "owner_role": "Application and platform engineering",
+      "scope": "Provide a read-only timeline and plan-difference view over persisted events; distinguish live, paused and historical views.",
+      "acceptance_criteria": [
+        "An operator can reconstruct assignments and plan changes at an earlier cursor.",
+        "Replay never invokes tools or changes canonical state."
+      ],
+      "negative_test": "A historical event cannot be interpreted as a new live external action.",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "external_execution_allowed_by_this_unit": false
+    },
+    {
+      "id": "PD-091",
+      "title": "Saved visual workspace and accessible navigation",
+      "origin": "addition",
+      "phase": "Visual workforce",
+      "dependsOn": [
+        "PD-087",
+        "PD-088"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": [],
+      "prs": [],
+      "contributingPrs": [],
+      "owner_role": "Application and platform engineering",
+      "scope": "Persist orientation, layout, filters and focus; provide search, an accessible tree, responsive panels, reduced motion and bounded graph rendering.",
+      "acceptance_criteria": [
+        "Preferences survive reload and hidden branches remain searchable.",
+        "Keyboard, reduced-motion and responsive browser tests pass; large graph limits are explicit."
+      ],
+      "negative_test": "Malformed saved preferences cannot hide the root, crash the graph or execute code.",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "external_execution_allowed_by_this_unit": false
+    },
+    {
+      "id": "PD-092",
+      "title": "Visual workforce production acceptance",
+      "origin": "addition",
+      "phase": "Visual workforce",
+      "dependsOn": [
+        "PD-084",
+        "PD-085",
+        "PD-086",
+        "PD-088",
+        "PD-089",
+        "PD-090",
+        "PD-091",
+        "PD-045",
+        "PD-047"
+      ],
+      "externalDependencies": [],
+      "externalPrerequisites": [],
+      "prs": [],
+      "contributingPrs": [],
+      "owner_role": "Application and platform engineering",
+      "scope": "Verify the visual workforce against real authenticated runtime events, shared names, reviewed experience, tenant isolation and the existing alpha release controls.",
+      "acceptance_criteria": [
+        "A named worker retains reviewed experience through restart, reassignment and provider change.",
+        "Every displayed state and summary reconciles to authorized runtime evidence; synthetic mode is unmistakable."
+      ],
+      "negative_test": "Loss of Boardroom name authority or event freshness cannot silently enable names or pretend workers remain live.",
+      "status": "planned",
+      "implementation_status": "not_started",
+      "acceptance_status": "not_evaluated",
+      "deployment_status": "not_deployed",
+      "external_execution_allowed_by_this_unit": false
+    }
+  ],
+  "pullRequests": [],
+  "planAuthority": "Owner instruction in this conversation to revise the plan and implement through PRs.",
+  "legacyIdMapping": "PD001..PD080 map one-to-one to PD-001..PD-080 to satisfy the portfolio contract; none were removed or counted twice.",
+  "runtimeScope": "Local reference implementation first. No deployment, live outreach, paid execution or real name allocation is established by this registry."
+}
