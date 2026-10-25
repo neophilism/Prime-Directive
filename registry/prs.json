@@ -4,7 +4,7 @@
   "roadmapVersion": 2,
   "planVerified": true,
   "plannedPrCount": 92,
-  "observedAt": "2026-10-25T04:03:08Z",
+  "observedAt": "2026-10-25T04:50:05Z",
   "units": [
     {
       "title": "Canonical ownership and architecture decisions",
@@ -35,7 +35,25 @@
       "contributingPrs": [],
       "dependsOn": [],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "live_verification_status": "not_performed",
+      "acceptance_evidence": {
+        "scope": "Local reference implementation; automated checks and engineering review, not production acceptance.",
+        "files": [
+          "tests/ownership.test.ts",
+          "docs/INTEGRATION_AUDIT.md"
+        ],
+        "checks": [
+          {
+            "id": 121070303305,
+            "name": "verify",
+            "headSha": "f2b7e9c4c1803eb260fd8e667fcc4ded67bda08a",
+            "conclusion": "success",
+            "completedAt": "2026-10-25T04:01:07Z",
+            "url": "https://github.com/neophilism/Prime-Directive/actions/runs/40160318379/job/121070303305"
+          }
+        ]
+      }
     },
     {
       "title": "Repository foundation and work registry",
@@ -68,7 +86,25 @@
         "PD-001"
       ],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "live_verification_status": "not_performed",
+      "acceptance_evidence": {
+        "scope": "Local reference implementation; automated checks and engineering review, not production acceptance.",
+        "files": [
+          "tests/registry.test.mjs",
+          ".github/workflows/ci.yml"
+        ],
+        "checks": [
+          {
+            "id": 121070303305,
+            "name": "verify",
+            "headSha": "f2b7e9c4c1803eb260fd8e667fcc4ded67bda08a",
+            "conclusion": "success",
+            "completedAt": "2026-10-25T04:01:07Z",
+            "url": "https://github.com/neophilism/Prime-Directive/actions/runs/40160318379/job/121070303305"
+          }
+        ]
+      }
     },
     {
       "title": "Identity membership and administrative access",
@@ -232,8 +268,8 @@
       "title": "Synthetic providers and evaluation harness",
       "phase": "Foundation",
       "owner_role": "Reliability and assurance engineer",
-      "status": "planned",
-      "implementation_status": "not_started",
+      "status": "in_progress",
+      "implementation_status": "partial",
       "acceptance_status": "not_evaluated",
       "deployment_status": "not_deployed",
       "scope": "Build reproducible source, mailbox, calendar, model, and webhook simulators with controllable failures.",
@@ -252,13 +288,16 @@
       "legacyId": "PD008",
       "origin": "original",
       "prs": [],
-      "contributingPrs": [],
+      "contributingPrs": [
+        6
+      ],
       "dependsOn": [
         "PD-002",
         "PD-007"
       ],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "implementation_notes": "The local task simulator contributes fixtures; the complete source/mailbox/calendar/model/webhook fault harness remains pending."
     },
     {
       "title": "Document intake and provenance",
@@ -653,8 +692,8 @@
       "title": "Subdirective and microtask graph",
       "phase": "Planning",
       "owner_role": "Planning engineer",
-      "status": "planned",
-      "implementation_status": "not_started",
+      "status": "in_progress",
+      "implementation_status": "partial",
       "acceptance_status": "not_evaluated",
       "deployment_status": "not_deployed",
       "scope": "Implement recursive decomposition, cross-workstream dependencies, acceptance rules, and bounded graph depth.",
@@ -673,12 +712,16 @@
       "legacyId": "PD021",
       "origin": "original",
       "prs": [],
-      "contributingPrs": [],
+      "contributingPrs": [
+        2,
+        3
+      ],
       "dependsOn": [
         "PD-020"
       ],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "implementation_notes": "Graph validation, dependencies and local revisions are implemented; recursive planning from evidence and immutable plan history remain pending."
     },
     {
       "title": "Cost estimation and atomic reservations",
@@ -1449,8 +1492,8 @@
       "title": "Prime directive dashboard and decision inbox",
       "phase": "Private alpha",
       "owner_role": "Application engineer",
-      "status": "planned",
-      "implementation_status": "not_started",
+      "status": "in_progress",
+      "implementation_status": "partial",
       "acceptance_status": "not_evaluated",
       "deployment_status": "not_deployed",
       "scope": "Deliver the visual directive canvas as the primary operator experience, with workers, evidence inspectors, grouped exceptions, spending and stop controls. Text lists are an accessible alternative.",
@@ -1469,7 +1512,10 @@
       "legacyId": "PD045",
       "origin": "original",
       "prs": [],
-      "contributingPrs": [],
+      "contributingPrs": [
+        7,
+        8
+      ],
       "dependsOn": [
         "PD-023",
         "PD-031",
@@ -1481,7 +1527,8 @@
         "PD-089"
       ],
       "externalDependencies": [],
-      "externalPrerequisites": []
+      "externalPrerequisites": [],
+      "implementation_notes": "The local visual workspace and inspectors are implemented; live exceptions, spend controls and production decision workflows remain pending."
     },
     {
       "title": "Commercial end to end acceptance",
@@ -2660,7 +2707,9 @@
       ],
       "externalDependencies": [],
       "externalPrerequisites": [],
-      "prs": [],
+      "prs": [
+        2
+      ],
       "contributingPrs": [],
       "owner_role": "Application and platform engineering",
       "scope": "Model the prime directive, nested subdirectives, tasks, dependencies, evidence, and worker attachments; provide deterministic hierarchical layout and collapse projections.",
@@ -2669,11 +2718,28 @@
         "Projection preserves stable IDs and distinguishes hierarchy, dependency and assignment edges."
       ],
       "negative_test": "A collapsed subtree cannot make its active workers appear attached to the wrong task.",
-      "status": "planned",
-      "implementation_status": "not_started",
-      "acceptance_status": "not_evaluated",
+      "status": "accepted",
+      "implementation_status": "implemented",
+      "acceptance_status": "passed",
       "deployment_status": "not_deployed",
-      "external_execution_allowed_by_this_unit": false
+      "external_execution_allowed_by_this_unit": false,
+      "live_verification_status": "not_performed",
+      "acceptance_evidence": {
+        "scope": "Local reference implementation; automated checks and engineering review, not production acceptance.",
+        "files": [
+          "tests/graph.test.ts"
+        ],
+        "checks": [
+          {
+            "id": 121070977668,
+            "name": "verify",
+            "headSha": "c58267b86fb3b8d9edf60a53ec0dabd94ae0b90c",
+            "conclusion": "success",
+            "completedAt": "2026-10-25T04:04:46Z",
+            "url": "https://github.com/neophilism/Prime-Directive/actions/runs/40160542906/job/121070977668"
+          }
+        ]
+      }
     },
     {
       "id": "PD-082",
@@ -2685,7 +2751,9 @@
       ],
       "externalDependencies": [],
       "externalPrerequisites": [],
-      "prs": [],
+      "prs": [
+        3
+      ],
       "contributingPrs": [],
       "owner_role": "Application and platform engineering",
       "scope": "Persist worker profiles independently of transient runs; implement atomic assignment, retirement, task release, and restart recovery in a local reference store.",
@@ -2694,11 +2762,28 @@
         "A worker and a task each have at most one active assignment in the initial runtime."
       ],
       "negative_test": "Two concurrent assignments cannot claim the same worker or task.",
-      "status": "planned",
-      "implementation_status": "not_started",
-      "acceptance_status": "not_evaluated",
+      "status": "accepted",
+      "implementation_status": "implemented",
+      "acceptance_status": "passed",
       "deployment_status": "not_deployed",
-      "external_execution_allowed_by_this_unit": false
+      "external_execution_allowed_by_this_unit": false,
+      "live_verification_status": "not_performed",
+      "acceptance_evidence": {
+        "scope": "Local reference implementation; automated checks and engineering review, not production acceptance.",
+        "files": [
+          "tests/store.test.ts"
+        ],
+        "checks": [
+          {
+            "id": 121071639181,
+            "name": "verify",
+            "headSha": "bf9f44e3801cef859fdc9e43217ec03360023e71",
+            "conclusion": "success",
+            "completedAt": "2026-10-25T04:08:20Z",
+            "url": "https://github.com/neophilism/Prime-Directive/actions/runs/40160764389/job/121071639181"
+          }
+        ]
+      }
     },
     {
       "id": "PD-083",
@@ -2709,9 +2794,13 @@
         "PD-002"
       ],
       "externalDependencies": [],
-      "externalPrerequisites": [],
+      "externalPrerequisites": [
+        "Configure and verify a read-only owner-scoped Boardroom inventory covering active credentials, reservations, logical agents and Prime Directive claims."
+      ],
       "prs": [],
-      "contributingPrs": [],
+      "contributingPrs": [
+        4
+      ],
       "owner_role": "Application and platform engineering",
       "scope": "Reuse the exact source-pinned catalog; filter active credentials, reserved names, logical-agent occupancy and Prime Directive claims from authenticated inventory.",
       "acceptance_criteria": [
@@ -2719,11 +2808,12 @@
         "Unavailable, incomplete or stale inventory returns unknown availability and prevents allocation."
       ],
       "negative_test": "A public catalog or partial inventory cannot be treated as proof that a name is unused.",
-      "status": "planned",
-      "implementation_status": "not_started",
+      "status": "in_progress",
+      "implementation_status": "partial",
       "acceptance_status": "not_evaluated",
       "deployment_status": "not_deployed",
-      "external_execution_allowed_by_this_unit": false
+      "external_execution_allowed_by_this_unit": false,
+      "implementation_notes": "The exact catalog and fail-closed provider adapter are implemented; authenticated Boardroom inventory is not configured or verified."
     },
     {
       "id": "PD-084",
@@ -2763,7 +2853,9 @@
       ],
       "externalDependencies": [],
       "externalPrerequisites": [],
-      "prs": [],
+      "prs": [
+        5
+      ],
       "contributingPrs": [],
       "owner_role": "Application and platform engineering",
       "scope": "Record accepted and rejected task outcomes by specialty, with evidence, reviewer, source versions and memory status; support revocation and expiry.",
@@ -2772,11 +2864,29 @@
         "Only reviewed, current, permitted memory is returned to later tasks; identity survives memory deletion."
       ],
       "negative_test": "A worker cannot promote its own unreviewed assertion or another workspace secret into reusable memory.",
-      "status": "planned",
-      "implementation_status": "not_started",
-      "acceptance_status": "not_evaluated",
+      "status": "accepted",
+      "implementation_status": "implemented",
+      "acceptance_status": "passed",
       "deployment_status": "not_deployed",
-      "external_execution_allowed_by_this_unit": false
+      "external_execution_allowed_by_this_unit": false,
+      "live_verification_status": "not_performed",
+      "acceptance_evidence": {
+        "scope": "Local reference implementation; automated checks and engineering review, not production acceptance.",
+        "files": [
+          "tests/experience.test.ts"
+        ],
+        "checks": [
+          {
+            "id": 121072647681,
+            "name": "verify",
+            "headSha": "bcb051c032822e0e3988d5ec35f39035680623f3",
+            "conclusion": "success",
+            "completedAt": "2026-10-25T04:13:48Z",
+            "url": "https://github.com/neophilism/Prime-Directive/actions/runs/40161100535/job/121072647681"
+          }
+        ]
+      },
+      "implementation_notes": "Retains reviewed outcomes and filtered reusable memory. Provider context integration and measured routing improvement remain separate work; no live expertise or model-weight learning is claimed."
     },
     {
       "id": "PD-086",
@@ -2814,7 +2924,9 @@
       ],
       "externalDependencies": [],
       "externalPrerequisites": [],
-      "prs": [],
+      "prs": [
+        7
+      ],
       "contributingPrs": [],
       "owner_role": "Application and platform engineering",
       "scope": "Build the primary visual interface with left-to-right and top-down layouts, zoom, pan, collapse, task selection, progress, evidence and worker detail panels.",
@@ -2823,11 +2935,28 @@
         "The root remains identifiable and layout changes preserve selection and hierarchy."
       ],
       "negative_test": "A graph with several nested levels cannot overlap cards or hide essential completion criteria.",
-      "status": "planned",
-      "implementation_status": "not_started",
-      "acceptance_status": "not_evaluated",
+      "status": "accepted",
+      "implementation_status": "implemented",
+      "acceptance_status": "passed",
       "deployment_status": "not_deployed",
-      "external_execution_allowed_by_this_unit": false
+      "external_execution_allowed_by_this_unit": false,
+      "live_verification_status": "not_performed",
+      "acceptance_evidence": {
+        "scope": "Local reference implementation; automated checks and engineering review, not production acceptance.",
+        "files": [
+          "tests/browser/workspace.spec.ts"
+        ],
+        "checks": [
+          {
+            "id": 121076717760,
+            "name": "verify",
+            "headSha": "fb07dec36e52703e40f8800814357babb2d6fd01",
+            "conclusion": "success",
+            "completedAt": "2026-10-25T04:36:44Z",
+            "url": "https://github.com/neophilism/Prime-Directive/actions/runs/40162471499/job/121076717760"
+          }
+        ]
+      }
     },
     {
       "id": "PD-088",
@@ -2840,7 +2969,9 @@
       ],
       "externalDependencies": [],
       "externalPrerequisites": [],
-      "prs": [],
+      "prs": [
+        8
+      ],
       "contributingPrs": [],
       "owner_role": "Application and platform engineering",
       "scope": "Render workers as separate selectable nodes whose movement and attachment follow assignment events; support stacked workers, pause and reduced motion.",
@@ -2849,11 +2980,29 @@
         "Animation can be disabled without losing assignment, state or activity information."
       ],
       "negative_test": "Animation cannot display work, progress or success without a corresponding event.",
-      "status": "planned",
-      "implementation_status": "not_started",
-      "acceptance_status": "not_evaluated",
+      "status": "accepted",
+      "implementation_status": "implemented",
+      "acceptance_status": "passed",
       "deployment_status": "not_deployed",
-      "external_execution_allowed_by_this_unit": false
+      "external_execution_allowed_by_this_unit": false,
+      "live_verification_status": "not_performed",
+      "acceptance_evidence": {
+        "scope": "Local reference implementation; automated checks and engineering review, not production acceptance.",
+        "files": [
+          "tests/workspace-view.test.ts",
+          "tests/browser/workspace.spec.ts"
+        ],
+        "checks": [
+          {
+            "id": 121078380725,
+            "name": "verify",
+            "headSha": "128ba49c7efd09f6e771d56e6cc70c0561a0a4d0",
+            "conclusion": "success",
+            "completedAt": "2026-10-25T04:46:06Z",
+            "url": "https://github.com/neophilism/Prime-Directive/actions/runs/40163032052/job/121078380725"
+          }
+        ]
+      }
     },
     {
       "id": "PD-089",
@@ -2866,8 +3015,12 @@
       ],
       "externalDependencies": [],
       "externalPrerequisites": [],
-      "prs": [],
-      "contributingPrs": [],
+      "prs": [
+        6
+      ],
+      "contributingPrs": [
+        9
+      ],
       "owner_role": "Application and platform engineering",
       "scope": "Stream typed activity summaries, tool stages, evidence references and uncertainty with resumable cursors, replay deduplication and disconnected state.",
       "acceptance_criteria": [
@@ -2875,11 +3028,36 @@
         "The public event schema excludes raw reasoning, prompts, secrets and unrestricted tool output."
       ],
       "negative_test": "Out-of-order events, unknown fields, tenant mismatch and slow subscribers cannot corrupt state or leak private context.",
-      "status": "planned",
-      "implementation_status": "not_started",
-      "acceptance_status": "not_evaluated",
+      "status": "accepted",
+      "implementation_status": "implemented",
+      "acceptance_status": "passed",
       "deployment_status": "not_deployed",
-      "external_execution_allowed_by_this_unit": false
+      "external_execution_allowed_by_this_unit": false,
+      "live_verification_status": "not_performed",
+      "acceptance_evidence": {
+        "scope": "Local reference implementation; automated checks and engineering review, not production acceptance.",
+        "files": [
+          "tests/api.test.ts"
+        ],
+        "checks": [
+          {
+            "id": 121074275807,
+            "name": "verify",
+            "headSha": "f88bc1cb79db5fd303379aee3877d75a07447700",
+            "conclusion": "success",
+            "completedAt": "2026-10-25T04:22:41Z",
+            "url": "https://github.com/neophilism/Prime-Directive/actions/runs/40161644593/job/121074275807"
+          },
+          {
+            "id": 121078922324,
+            "name": "verify",
+            "headSha": "7d8c7254468c8f2ebc2974c65555c65462e225be",
+            "conclusion": "success",
+            "completedAt": "2026-10-25T04:49:15Z",
+            "url": "https://github.com/neophilism/Prime-Directive/actions/runs/40163217680/job/121078922324"
+          }
+        ]
+      }
     },
     {
       "id": "PD-090",
@@ -2918,7 +3096,9 @@
       ],
       "externalDependencies": [],
       "externalPrerequisites": [],
-      "prs": [],
+      "prs": [
+        8
+      ],
       "contributingPrs": [],
       "owner_role": "Application and platform engineering",
       "scope": "Persist orientation, layout, filters and focus; provide search, an accessible tree, responsive panels, reduced motion and bounded graph rendering.",
@@ -2927,11 +3107,29 @@
         "Keyboard, reduced-motion and responsive browser tests pass; large graph limits are explicit."
       ],
       "negative_test": "Malformed saved preferences cannot hide the root, crash the graph or execute code.",
-      "status": "planned",
-      "implementation_status": "not_started",
-      "acceptance_status": "not_evaluated",
+      "status": "accepted",
+      "implementation_status": "implemented",
+      "acceptance_status": "passed",
       "deployment_status": "not_deployed",
-      "external_execution_allowed_by_this_unit": false
+      "external_execution_allowed_by_this_unit": false,
+      "live_verification_status": "not_performed",
+      "acceptance_evidence": {
+        "scope": "Local reference implementation; automated checks and engineering review, not production acceptance.",
+        "files": [
+          "tests/workspace-view.test.ts",
+          "tests/browser/workspace.spec.ts"
+        ],
+        "checks": [
+          {
+            "id": 121078380725,
+            "name": "verify",
+            "headSha": "128ba49c7efd09f6e771d56e6cc70c0561a0a4d0",
+            "conclusion": "success",
+            "completedAt": "2026-10-25T04:46:06Z",
+            "url": "https://github.com/neophilism/Prime-Directive/actions/runs/40163032052/job/121078380725"
+          }
+        ]
+      }
     },
     {
       "id": "PD-092",
@@ -2982,9 +3180,129 @@
       "headSha": "f2b7e9c4c1803eb260fd8e667fcc4ded67bda08a",
       "baseRef": "main",
       "mergeCommitSha": "e482df54475bb4d72f9a5a298e35a791c33b3529"
+    },
+    {
+      "id": 5001658830,
+      "number": 2,
+      "title": "PD-081: add directive graph validation and visual projection",
+      "url": "https://github.com/neophilism/Prime-Directive/pull/2",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-25T04:04:26Z",
+      "updatedAt": "2026-10-25T04:06:51Z",
+      "closedAt": "2026-10-25T04:06:51Z",
+      "mergedAt": "2026-10-25T04:06:51Z",
+      "headSha": "c58267b86fb3b8d9edf60a53ec0dabd94ae0b90c",
+      "baseRef": "main",
+      "mergeCommitSha": "c5ab1129c4345f8b79bf95598578d19e49cd2e3f"
+    },
+    {
+      "id": 5001678676,
+      "number": 3,
+      "title": "PD-082: persist workers, assignments, runs, and activity",
+      "url": "https://github.com/neophilism/Prime-Directive/pull/3",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-25T04:08:01Z",
+      "updatedAt": "2026-10-25T04:09:56Z",
+      "closedAt": "2026-10-25T04:09:55Z",
+      "mergedAt": "2026-10-25T04:09:55Z",
+      "headSha": "bf9f44e3801cef859fdc9e43217ec03360023e71",
+      "baseRef": "main",
+      "mergeCommitSha": "2434be4d2c83bde55a48ba612abfc2f6219392b6"
+    },
+    {
+      "id": 5001690003,
+      "number": 4,
+      "title": "Add Boardroom catalog integrity and name-availability adapter (PD-083 contribution)",
+      "url": "https://github.com/neophilism/Prime-Directive/pull/4",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-25T04:10:13Z",
+      "updatedAt": "2026-10-25T04:12:48Z",
+      "closedAt": "2026-10-25T04:12:48Z",
+      "mergedAt": "2026-10-25T04:12:48Z",
+      "headSha": "90b3edfe919b3b1e0c780953dcd2381ef8dac731",
+      "baseRef": "main",
+      "mergeCommitSha": "21367c1db4c41ca993e253cfcd44cf56568a86a7"
+    },
+    {
+      "id": 5001706660,
+      "number": 5,
+      "title": "PD-085: retain reviewed specialty experience and reusable memory",
+      "url": "https://github.com/neophilism/Prime-Directive/pull/5",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-25T04:13:28Z",
+      "updatedAt": "2026-10-25T04:18:33Z",
+      "closedAt": "2026-10-25T04:18:33Z",
+      "mergedAt": "2026-10-25T04:18:33Z",
+      "headSha": "bcb051c032822e0e3988d5ec35f39035680623f3",
+      "baseRef": "main",
+      "mergeCommitSha": "62659c671c832944d64166d4122cd05b4c7275be"
+    },
+    {
+      "id": 5001750646,
+      "number": 6,
+      "title": "PD-089: add resumable activity API and local simulation runtime",
+      "url": "https://github.com/neophilism/Prime-Directive/pull/6",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-25T04:22:22Z",
+      "updatedAt": "2026-10-25T04:28:22Z",
+      "closedAt": "2026-10-25T04:28:22Z",
+      "mergedAt": "2026-10-25T04:28:21Z",
+      "headSha": "f88bc1cb79db5fd303379aee3877d75a07447700",
+      "baseRef": "main",
+      "mergeCommitSha": "8ded070258213d140265e4d5609e38ade556b137"
+    },
+    {
+      "id": 5001825061,
+      "number": 7,
+      "title": "PD-087: build the visual directive canvas and persistent worker inspectors",
+      "url": "https://github.com/neophilism/Prime-Directive/pull/7",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-25T04:35:56Z",
+      "updatedAt": "2026-10-25T04:40:17Z",
+      "closedAt": "2026-10-25T04:40:17Z",
+      "mergedAt": "2026-10-25T04:40:17Z",
+      "headSha": "fb07dec36e52703e40f8800814357babb2d6fd01",
+      "baseRef": "main",
+      "mergeCommitSha": "8468d95c3771fb9ec1655e798bb559dd1473b004"
+    },
+    {
+      "id": 5001879399,
+      "number": 8,
+      "title": "PD-088/091: animate persistent workers and save accessible workspace views",
+      "url": "https://github.com/neophilism/Prime-Directive/pull/8",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-25T04:45:12Z",
+      "updatedAt": "2026-10-25T04:47:50Z",
+      "closedAt": "2026-10-25T04:47:50Z",
+      "mergedAt": "2026-10-25T04:47:50Z",
+      "headSha": "128ba49c7efd09f6e771d56e6cc70c0561a0a4d0",
+      "baseRef": "main",
+      "mergeCommitSha": "ec7fac226113147f017d5197528bff4d9415a8b4"
+    },
+    {
+      "id": 5001897509,
+      "number": 9,
+      "title": "Fix recent activity recovery for long-lived worker histories",
+      "url": "https://github.com/neophilism/Prime-Directive/pull/9",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-25T04:48:19Z",
+      "updatedAt": "2026-10-25T04:50:05Z",
+      "closedAt": "2026-10-25T04:50:05Z",
+      "mergedAt": "2026-10-25T04:50:05Z",
+      "headSha": "7d8c7254468c8f2ebc2974c65555c65462e225be",
+      "baseRef": "main",
+      "mergeCommitSha": "1bad3f0e28dda502b90e3bd59d4100a1df5bc914"
     }
   ],
   "planAuthority": "Owner instruction in this conversation to revise the plan and implement through PRs.",
   "legacyIdMapping": "PD001..PD080 map one-to-one to PD-001..PD-080 to satisfy the portfolio contract; none were removed or counted twice.",
-  "runtimeScope": "Local reference implementation first. No deployment, live outreach, paid execution or real name allocation is established by this registry."
+  "runtimeScope": "Local loopback simulation with persistent SQLite state and a browser UI. Nine work units have local reference acceptance; authenticated live providers, shared name allocation, outreach and deployment remain unverified and disabled."
 }

@@ -2,6 +2,8 @@
 
 The canonical plan is [`registry/prs.json`](../registry/prs.json). It contains the original 80 work units plus 12 visual-workforce additions: **92 units total**. The table below is documentation of that registry, not a second machine-readable plan. Original IDs are mapped explicitly from PD001 to PD-001 through PD080 to PD-080 to meet the inspected portfolio contract.
 
+The [verified implementation status](IMPLEMENTATION_STATUS.md) links merged PRs and validation evidence. Nine units have local reference acceptance; four have partial contributions. Production authentication, document ingestion, autonomous planning, live execution and shared naming remain separate unfinished work. Merge, work-unit acceptance, deployment and live verification are tracked independently.
+
 ## Delivery order
 
 1. Establish source-bound ownership contracts, the shared registry, and CI (PD-001/002).

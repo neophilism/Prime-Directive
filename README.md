@@ -2,11 +2,13 @@
 
 A visual workspace for turning a prime directive and supporting documents into a managed hierarchy of subdirectives, tasks, and verified outcomes.
 
-The primary interface is an interactive directive graph. Persistent, named AI workers move between tasks, retain reviewed experience, and expose concise activity summaries, evidence, and uncertainty. A worker's identity persists independently of any one model call or execution process.
+The primary interface is an interactive directive graph. Persistent workers move between tasks, retain reviewed experience, and expose concise activity summaries and evidence. A worker's identity persists independently of any one model call or execution process. The planned shared naming integration uses Boardroom's exact catalog and authoritative availability.
 
 ## Repository status
 
 A runnable local visual workspace with a validated directive graph, persistent worker identities, an experience ledger and a replayable activity stream. Implementation is delivered through tested pull requests. Planned capabilities are not deployed capabilities.
+
+See [verified implementation status](docs/IMPLEMENTATION_STATUS.md) for delivered PRs, validation and the next dependency-ready work.
 
 The initial implementation targets a local visual workspace with synthetic work, graph validation, persistent worker records, and observable task execution. Live model execution, external outreach, production authentication, and cross-application name reservations are separate capabilities and remain disabled until implemented and verified.
 
