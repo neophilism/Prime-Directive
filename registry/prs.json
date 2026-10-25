@@ -4,15 +4,15 @@
   "roadmapVersion": 2,
   "planVerified": true,
   "plannedPrCount": 92,
-  "observedAt": "2026-10-25T03:30:00Z",
+  "observedAt": "2026-10-25T04:03:08Z",
   "units": [
     {
       "title": "Canonical ownership and architecture decisions",
       "phase": "Foundation",
       "owner_role": "Platform engineer",
-      "status": "planned",
-      "implementation_status": "not_started",
-      "acceptance_status": "not_evaluated",
+      "status": "accepted",
+      "implementation_status": "implemented",
+      "acceptance_status": "passed",
       "deployment_status": "not_deployed",
       "scope": "Audit existing engine and application contracts; decide canonical identity, directive, artifact, and workflow ownership. Record provider and deployment alternatives.",
       "acceptance_criteria": [
@@ -29,7 +29,9 @@
       "id": "PD-001",
       "legacyId": "PD001",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        1
+      ],
       "contributingPrs": [],
       "dependsOn": [],
       "externalDependencies": [],
@@ -39,9 +41,9 @@
       "title": "Repository foundation and work registry",
       "phase": "Foundation",
       "owner_role": "Platform engineer",
-      "status": "planned",
-      "implementation_status": "not_started",
-      "acceptance_status": "not_evaluated",
+      "status": "accepted",
+      "implementation_status": "implemented",
+      "acceptance_status": "passed",
       "deployment_status": "not_deployed",
       "scope": "Create the package boundaries, build pipeline, schema validation, and canonical registry adapter for stable development work IDs.",
       "acceptance_criteria": [
@@ -58,7 +60,9 @@
       "id": "PD-002",
       "legacyId": "PD002",
       "origin": "original",
-      "prs": [],
+      "prs": [
+        1
+      ],
       "contributingPrs": [],
       "dependsOn": [
         "PD-001"
@@ -2963,7 +2967,23 @@
       "external_execution_allowed_by_this_unit": false
     }
   ],
-  "pullRequests": [],
+  "pullRequests": [
+    {
+      "id": 5001640118,
+      "number": 1,
+      "title": "PD-001/002: establish architecture, visual workforce plan, and CI",
+      "url": "https://github.com/neophilism/Prime-Directive/pull/1",
+      "state": "closed",
+      "draft": false,
+      "createdAt": "2026-10-25T04:00:47Z",
+      "updatedAt": "2026-10-25T04:03:08Z",
+      "closedAt": "2026-10-25T04:03:08Z",
+      "mergedAt": "2026-10-25T04:03:08Z",
+      "headSha": "f2b7e9c4c1803eb260fd8e667fcc4ded67bda08a",
+      "baseRef": "main",
+      "mergeCommitSha": "e482df54475bb4d72f9a5a298e35a791c33b3529"
+    }
+  ],
   "planAuthority": "Owner instruction in this conversation to revise the plan and implement through PRs.",
   "legacyIdMapping": "PD001..PD080 map one-to-one to PD-001..PD-080 to satisfy the portfolio contract; none were removed or counted twice.",
   "runtimeScope": "Local reference implementation first. No deployment, live outreach, paid execution or real name allocation is established by this registry."
