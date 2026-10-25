@@ -1,9 +1,11 @@
 import {DatabaseSync} from 'node:sqlite';
 import {readFileSync} from 'node:fs';
-import {randomUUID} from 'node:crypto';
+import {randomUUID,createHash} from 'node:crypto';
 import {DomainError, requireText, transitionNode, validateGraph, validId} from '../domain/graph.ts';
 import type {DirectiveGraph} from '../domain/graph.ts';
 import type {ActivityEvent, ActivityKind, WorkerProfile, WorkerRun, WorkspaceSnapshot} from '../domain/workers.ts';
+import {parseEvaluation,requireReviewer,usableLessons} from '../domain/experience.ts';
+import type {Experience,ReviewPrincipal} from '../domain/experience.ts';
 
 type Row = Record<string, unknown>;
 const workerRow = (r:Row):WorkerProfile => ({id:r.id as string,workspaceId:r.workspace_id as string,label:r.label as string,
@@ -125,6 +127,66 @@ export class WorkspaceStore {
       this.event(workspaceId,workerId,'worker.retired','Worker retired; identity and reviewed history are retained.');
       return this.worker(workspaceId,workerId);
     });
+  }
+  experience(workspaceId:string,workerId:string):Experience[] {
+    this.worker(workspaceId,workerId);
+    return this.db.prepare('SELECT body FROM experience WHERE workspace_id=? AND worker_id=? ORDER BY rowid').all(workspaceId,workerId)
+      .map(r => JSON.parse(r.body as string) as Experience);
+  }
+  recordEvaluation(workspaceId:string,workerId:string,input:unknown,actor:ReviewPrincipal,now=Date.now()):Experience {
+    requireReviewer(actor,workspaceId,workerId);
+    const command=parseEvaluation(input);
+    const fingerprint=createHash('sha256').update(JSON.stringify({command,reviewerId:actor.id})).digest('hex');
+    return this.transaction(() => {
+      const worker=this.worker(workspaceId,workerId);
+      const prior=this.db.prepare('SELECT * FROM experience WHERE id=?').get(command.id);
+      if (prior) {
+        if (prior.workspace_id !== workspaceId || prior.worker_id !== workerId || prior.command_fingerprint !== fingerprint) throw new DomainError('conflict','Evaluation identity already has a different result');
+        return JSON.parse(prior.body as string) as Experience;
+      }
+      if (command.lesson && Date.parse(command.lesson.expiresAt) <= now) throw new DomainError('invalid','New lessons require future expiry');
+      const run=this.db.prepare("SELECT * FROM runs WHERE id=? AND workspace_id=? AND worker_id=? AND state='completed'").get(command.runId,workspaceId,workerId);
+      if (!run) throw new DomainError('invalid','Evaluation requires a completed run for this worker');
+      if (this.db.prepare('SELECT id FROM experience WHERE workspace_id=? AND run_id=?').get(workspaceId,command.runId)) throw new DomainError('conflict','This run already has an evaluation');
+      const entry:Experience={id:command.id,workspaceId,workerId,runId:command.runId,specialty:worker.specialty,
+        outcome:command.outcome,evidence:command.evidence,reviewerId:actor.id,createdAt:new Date(now).toISOString(),revoked:false,
+        lesson:command.lesson ? {...command.lesson,status:'pending'} : null,modelVersion:'simulator-v1'};
+      this.db.prepare('INSERT INTO experience(id,workspace_id,worker_id,run_id,command_fingerprint,body) VALUES(?,?,?,?,?,?)')
+        .run(entry.id,workspaceId,workerId,entry.runId,fingerprint,JSON.stringify(entry));
+      this.event(workspaceId,workerId,'experience.reviewed',`Simulation evaluation recorded: ${entry.outcome}.`,run.task_id as string,entry.runId,entry.evidence);
+      return entry;
+    });
+  }
+  reviewLesson(workspaceId:string,workerId:string,experienceId:string,decision:'approved'|'revoked',actor:ReviewPrincipal,now=Date.now()):Experience {
+    requireReviewer(actor,workspaceId,workerId);
+    if (!['approved','revoked'].includes(decision)) throw new DomainError('invalid','Invalid lesson decision');
+    return this.transaction(() => {
+      const entry=this.experience(workspaceId,workerId).find(e => e.id === experienceId);
+      if (!entry?.lesson) throw new DomainError('not_found','Lesson not found');
+      if (entry.lesson.status === decision) return entry;
+      if (decision === 'approved' && (entry.revoked || entry.lesson.status !== 'pending' || Date.parse(entry.lesson.expiresAt) <= now))
+        throw new DomainError('invalid','Only current pending lessons can be approved');
+      entry.lesson.status=decision;
+      this.db.prepare('UPDATE experience SET body=? WHERE id=? AND workspace_id=?').run(JSON.stringify(entry),entry.id,workspaceId);
+      this.event(workspaceId,workerId,decision === 'approved' ? 'experience.reviewed' : 'memory.revoked',
+        decision === 'approved' ? 'A reviewed simulation lesson is available for compatible future tasks.' : 'A lesson was revoked and is excluded from future context.');
+      return entry;
+    });
+  }
+  revokeExperience(workspaceId:string,workerId:string,experienceId:string,actor:ReviewPrincipal):Experience {
+    requireReviewer(actor,workspaceId,workerId);
+    return this.transaction(() => {
+      const entry=this.experience(workspaceId,workerId).find(e => e.id === experienceId);
+      if (!entry) throw new DomainError('not_found','Experience not found');
+      if (entry.revoked) return entry;
+      entry.revoked=true;if(entry.lesson)entry.lesson.status='revoked';
+      this.db.prepare('UPDATE experience SET body=? WHERE id=? AND workspace_id=?').run(JSON.stringify(entry),entry.id,workspaceId);
+      this.event(workspaceId,workerId,'memory.revoked','Evaluation revoked; it no longer contributes to skill evidence or memory.');
+      return entry;
+    });
+  }
+  lessons(workspaceId:string,workerId:string,sources:Readonly<Record<string,number>>,now=Date.now()) {
+    return usableLessons(this.experience(workspaceId,workerId),workspaceId,workerId,sources,now);
   }
   events(workspaceId:string,after=0,limit=100):ActivityEvent[] {
     if (!Number.isSafeInteger(after) || after < 0 || !Number.isSafeInteger(limit) || limit < 1 || limit > 500) throw new DomainError('invalid','Invalid event cursor or limit');

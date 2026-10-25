@@ -25,3 +25,10 @@ CREATE TABLE IF NOT EXISTS activity_events (
   simulation INTEGER NOT NULL CHECK(simulation = 1)
 );
 CREATE INDEX IF NOT EXISTS events_by_workspace ON activity_events(workspace_id,cursor);
+CREATE TABLE IF NOT EXISTS experience (
+  id TEXT PRIMARY KEY, workspace_id TEXT NOT NULL REFERENCES graphs(workspace_id),
+  worker_id TEXT NOT NULL REFERENCES workers(id), run_id TEXT NOT NULL REFERENCES runs(id),
+  command_fingerprint TEXT NOT NULL, body TEXT NOT NULL,
+  UNIQUE(workspace_id,run_id)
+);
+CREATE INDEX IF NOT EXISTS experience_by_worker ON experience(workspace_id,worker_id);
