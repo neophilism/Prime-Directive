@@ -2,6 +2,8 @@
 
 This revision makes the graph the primary interface. It supersedes the list-first interaction in specification 1.0. The user provides a prime directive and documents; the system constructs and maintains the work hierarchy. People navigate and inspect that hierarchy rather than manage model conversations.
 
+This document specifies the complete intended interaction. The [verified implementation status](IMPLEMENTATION_STATUS.md) distinguishes the delivered local canvas, workers and memory from pending live planning, naming and provider integrations.
+
 ## Canvas
 
 The prime directive appears at the left in horizontal mode or at the top in vertical mode. Its subdirectives branch into tasks and subtasks. Solid hierarchy edges explain why work exists; dashed dependency edges explain execution order; colored worker tethers show current assignment. The backend stores these as distinct relationships. A dependency must not be inferred from visual proximity.

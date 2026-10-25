@@ -8,7 +8,7 @@ Build an objective management system that turns a user's documents, desired outc
 
 The Prime Directive is the product name, a reference to Star Trek and a description of its human interface. Its principal investment is a durable control system around reasoning agents: shared knowledge with provenance, explicit plans, controlled external actions, and evidence of outcomes. The product can organize very large numbers of logical agents and tasks, but compute, money, provider quotas, recipient attention, and human decisions remain finite. Neither complete understanding nor success in an external objective can be guaranteed by adding more agents.
 
-The recommended first release is a bounded private alpha for commercial partnership and investor workflow management, accompanied by public civic information and voluntary participation tools. The complete roadmap contains 92 planned development units with dependencies, acceptance conditions, and negative tests. These are proposed work units, not existing pull requests or completed implementation.
+The recommended first release is a bounded private alpha for commercial partnership and investor workflow management, accompanied by public civic information and voluntary participation tools. The complete roadmap contains 92 development units with dependencies, acceptance conditions, and negative tests. Work-unit IDs describe scope; actual PRs, implementation, acceptance and deployment are recorded separately. See [verified implementation status](IMPLEMENTATION_STATUS.md) for the delivered local reference and remaining work.
 
 ## 1 Product model and scope
 
