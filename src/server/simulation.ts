@@ -11,9 +11,10 @@ export function initializeSimulation(store:WorkspaceStore) {
 /** A deterministic provider simulator. No LLM, network calls or external effects. */
 export function stepSimulation(store:WorkspaceStore) {
   const s=store.snapshot(DEMO_WORKSPACE);
-  const working=s.workers.filter(w => w.state==='working');
+  const ordered=[...s.workers].sort((a,b)=>a.label.localeCompare(b.label)||a.id.localeCompare(b.id));
+  const working=ordered.filter(w => w.state==='working');
   // Fill available workers before advancing results so the canvas shows concurrent work.
-  const idle=s.workers.find(w => w.state==='idle');
+  const idle=ordered.find(w => w.state==='idle');
   const task=s.graph.nodes.find(n => ['task','subtask'].includes(n.kind) && n.state==='ready' &&
     !s.graph.nodes.some(c => c.parentId===n.id) && s.graph.dependencies.filter(d => d.target===n.id).every(d => s.graph.nodes.find(p => p.id===d.source)?.state==='succeeded'));
   if (idle && task) return {changed:true,run:store.assign(DEMO_WORKSPACE,idle.id,task.id,s.graph.revision)};
