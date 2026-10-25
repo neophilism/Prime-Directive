@@ -64,7 +64,16 @@ export function createApplication(store:WorkspaceStore,options:{frontendOrigin?:
       if (req.method==='GET' && url.pathname==='/api/health') return reply(res,200,{ok:true,mode:'simulation',liveExecution:false});
       if (req.method==='GET' && url.pathname==='/api/workspace') return reply(res,200,store.snapshot(DEMO_WORKSPACE));
       if (req.method==='GET' && url.pathname==='/api/names') return reply(res,200,{catalog:approvedNames,...await readNameAvailability(null,'local-owner')});
-      if (req.method==='GET' && url.pathname==='/api/activity') return reply(res,200,{events:store.events(DEMO_WORKSPACE,cursor(url.searchParams.get('after')??'0'),100)});
+      if (req.method==='GET' && url.pathname==='/api/activity') {
+        if(url.searchParams.has('recent')){
+          if(url.searchParams.get('recent')!=='1'||url.searchParams.has('after'))throw new HttpError(400,'Invalid history mode');
+          const through=cursor(url.searchParams.get('through'));
+          if(through>store.snapshot(DEMO_WORKSPACE).cursor)throw new HttpError(409,'History cursor is ahead of the workspace');
+          return reply(res,200,{events:store.recentEvents(DEMO_WORKSPACE,through,100)});
+        }
+        if(url.searchParams.has('through'))throw new HttpError(400,'History mode required');
+        return reply(res,200,{events:store.events(DEMO_WORKSPACE,cursor(url.searchParams.get('after')??'0'),100)});
+      }
       if (req.method==='GET' && url.pathname==='/api/events') {
         if(subscribers.size>=8)throw new HttpError(429,'Too many event subscribers');
         const after=cursor(req.headers['last-event-id']??url.searchParams.get('after')??'0');

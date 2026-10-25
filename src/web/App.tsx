@@ -62,11 +62,22 @@ export function App() {
   const commitSnapshot=useCallback((next:WorkspaceSnapshot)=>setSnapshot(current=>newerSnapshot(current,next)),[]);
   useEffect(()=>{
     const controller=new AbortController();let source:EventSource|undefined;
+    let refreshTimer:ReturnType<typeof setTimeout>|undefined;let refreshing=false,refreshAgain=false;
+    function requestRefresh(){
+      if(controller.signal.aborted)return;refreshAgain=true;if(refreshing||refreshTimer)return;
+      refreshTimer=setTimeout(()=>{refreshTimer=undefined;void refresh();},30);
+    }
+    async function refresh(){
+      if(controller.signal.aborted)return;refreshing=true;refreshAgain=false;
+      try{commitSnapshot(await getJSON<WorkspaceSnapshot>('/api/workspace',controller.signal));}
+      catch(e){if(!controller.signal.aborted)setError((e as Error).message);}
+      finally{refreshing=false;if(refreshAgain)requestRefresh();}
+    }
     async function start() {
       const initial=await getJSON<WorkspaceSnapshot>('/api/workspace',controller.signal);
       if(controller.signal.aborted)return;
       commitSnapshot(initial);cursor.current=initial.cursor;
-      const history=await getJSON<{events:ActivityEvent[]}>('/api/activity',controller.signal);
+      const history=await getJSON<{events:ActivityEvent[]}>(`/api/activity?recent=1&through=${initial.cursor}`,controller.signal);
       if(controller.signal.aborted)return;
       setEvents(history.events.slice(-100));
       source=new EventSource(`/api/events?after=${initial.cursor}`);
@@ -77,12 +88,12 @@ export function App() {
           const next=acceptActivity(cursor.current,JSON.parse((event as MessageEvent).data),initial.graph.workspaceId);
           if(!next)return;cursor.current=next.cursor;lastObserved.current=Date.now();setConnection('connected');
           setEvents(current=>[...current.filter(e=>e.eventId!==next.eventId),next].slice(-100));
-          void getJSON<WorkspaceSnapshot>('/api/workspace',controller.signal).then(commitSnapshot).catch(e=>{if(!controller.signal.aborted)setError(e.message);});
+          requestRefresh();
         } catch(e){setError((e as Error).message);}
       });
     }
     void start().catch(e=>{if(!controller.signal.aborted){setError(e.message);setConnection('disconnected');}});
-    return()=>{controller.abort();source?.close();};
+    return()=>{controller.abort();source?.close();if(refreshTimer)clearTimeout(refreshTimer);};
   },[commitSnapshot]);
   const command=useCallback(async(body:Record<string,unknown>)=>{
     if(commandBusy.current)return;
