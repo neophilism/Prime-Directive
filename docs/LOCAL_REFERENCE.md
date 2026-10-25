@@ -16,6 +16,7 @@ The synthetic investment-readiness example is seeded only on first initializatio
 - `GET /api/workspace`: consistent graph, workforce, run history and event cursor.
 - `GET /api/events`: server-sent events. `Last-Event-ID` takes precedence over `after`; invalid/ahead cursors fail explicitly.
 - `GET /api/activity?after=CURSOR`: paginated persisted public events.
+- `GET /api/activity?recent=1&through=CURSOR`: latest 100 events at or before a snapshot cursor, in chronological order. The client uses this bounded tail on reload, then subscribes after that snapshot cursor so long histories do not lose recent activity. Stream bursts coalesce snapshot reads, with at most one refresh in flight.
 - `GET /api/names`: public catalog plus unknown availability until the authenticated authority is connected.
 - `GET /api/workers/ID/experience`: reviewed experience, measured specialty counts and currently usable lessons.
 - `POST /api/commands`: allowlisted simulation commands. Requires the exact loopback UI origin, JSON and `X-Prime-Directive: local-ui`. The command body cannot choose a workspace or reviewer identity.

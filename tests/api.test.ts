@@ -5,6 +5,8 @@ import {WorkspaceStore} from '../src/server/store.ts';
 import {createApplication} from '../src/server/app.ts';
 import {initializeSimulation,stepSimulation} from '../src/server/simulation.ts';
 import {acceptActivity,newerSnapshot,parseActivity} from '../src/domain/activity.ts';
+import {exampleGraph} from '../src/domain/example.ts';
+import type {ActivityEvent} from '../src/domain/workers.ts';
 
 async function fixture() {
   const store=new WorkspaceStore(':memory:');initializeSimulation(store);
@@ -90,4 +92,27 @@ test('simulation completes bounded leaf work without asserting an external outco
     assert.equal(s.graph.nodes.find(n=>n.kind==='directive')!.state,'ready');
     assert.equal(s.workers.every(w=>w.state==='idle'),true);
   } finally {store.close();}
+});
+test('recent history returns the latest bounded page at the snapshot cursor without crossing workspaces',async()=>{
+  const f=await fixture();
+  try{
+    stepSimulation(f.store);
+    const worker=f.store.snapshot('local-demo').workers.find(w=>w.state==='working')!;
+    const other={...exampleGraph(),id:'other-directive',workspaceId:'other-workspace'};f.store.initialize(other);
+    for(let i=0;i<60;i++){
+      f.store.pauseWorker('local-demo',worker.id,true);f.store.pauseWorker('local-demo',worker.id,false);
+      if(i===30)f.store.createSimulationWorker('other-workspace','Other worker','Research');
+    }
+    const snapshot=f.store.snapshot('local-demo');
+    f.store.pauseWorker('local-demo',worker.id,true);
+    const response=await fetch(`${f.url}/api/activity?recent=1&through=${snapshot.cursor}`);
+    const history=await response.json() as {events:ActivityEvent[]};
+    assert.equal(history.events.length,100);assert.equal(history.events.at(-1)!.cursor,snapshot.cursor);
+    assert.equal(history.events.at(-1)!.kind,'worker.resumed');
+    assert.ok(history.events.every(e=>e.workspaceId==='local-demo'&&e.cursor<=snapshot.cursor));
+    assert.ok(history.events.every((e,i)=>i===0||e.cursor>history.events[i-1].cursor));
+    const replay=f.store.events('local-demo',snapshot.cursor);assert.equal(replay.length,1);assert.equal(replay[0].kind,'worker.paused');
+    for(const query of ['recent=1','recent=0&through=1','recent=1&through=1&after=0','through=1'])assert.equal((await fetch(`${f.url}/api/activity?${query}`)).status,400);
+    assert.equal((await fetch(`${f.url}/api/activity?recent=1&through=999999`)).status,409);
+  }finally{await f.close();}
 });

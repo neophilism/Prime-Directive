@@ -12,6 +12,9 @@ const workerRow = (r:Row):WorkerProfile => ({id:r.id as string,workspaceId:r.wor
   name:r.name as null,nameClaimId:r.name_claim_id as null,specialty:r.specialty as string,state:r.state as WorkerProfile['state'],createdAt:r.created_at as string,simulation:true});
 const runRow = (r:Row):WorkerRun => ({id:r.id as string,workspaceId:r.workspace_id as string,workerId:r.worker_id as string,
   taskId:r.task_id as string,state:r.state as WorkerRun['state'],startedAt:r.started_at as string,endedAt:r.ended_at as string|null});
+const activityRow=(r:Row):ActivityEvent=>({cursor:Number(r.cursor),eventId:r.event_id as string,workspaceId:r.workspace_id as string,workerId:r.worker_id as string,
+  taskId:r.task_id as string|null,runId:r.run_id as string|null,kind:r.kind as ActivityKind,summary:r.summary as string,
+  evidence:JSON.parse(r.evidence as string) as string[],occurredAt:r.occurred_at as string,simulation:true});
 
 /** Local, single-owner reference persistence. Not a production authentication boundary. */
 export class WorkspaceStore {
@@ -192,8 +195,12 @@ export class WorkspaceStore {
     if (!Number.isSafeInteger(after) || after < 0 || !Number.isSafeInteger(limit) || limit < 1 || limit > 500) throw new DomainError('invalid','Invalid event cursor or limit');
     this.graph(workspaceId);
     return this.db.prepare('SELECT * FROM activity_events WHERE workspace_id=? AND cursor>? ORDER BY cursor LIMIT ?').all(workspaceId,after,limit)
-      .map(r => ({cursor:Number(r.cursor),eventId:r.event_id as string,workspaceId:r.workspace_id as string,workerId:r.worker_id as string,
-        taskId:r.task_id as string|null,runId:r.run_id as string|null,kind:r.kind as ActivityKind,summary:r.summary as string,
-        evidence:JSON.parse(r.evidence as string) as string[],occurredAt:r.occurred_at as string,simulation:true}));
+      .map(activityRow);
+  }
+  recentEvents(workspaceId:string,through:number,limit=100):ActivityEvent[] {
+    if(!Number.isSafeInteger(through)||through<0||!Number.isSafeInteger(limit)||limit<1||limit>500)throw new DomainError('invalid','Invalid history cursor or limit');
+    this.graph(workspaceId);
+    return this.db.prepare('SELECT * FROM activity_events WHERE workspace_id=? AND cursor<=? ORDER BY cursor DESC LIMIT ?')
+      .all(workspaceId,through,limit).reverse().map(activityRow);
   }
 }
