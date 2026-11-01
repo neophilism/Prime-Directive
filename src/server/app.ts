@@ -9,6 +9,8 @@ import type {ReviewPrincipal} from '../domain/experience.ts';
 import type {WorkspaceStore} from './store.ts';
 import {approvedNames,readNameAvailability} from './name-inventory.ts';
 import {DEMO_WORKSPACE,stepSimulation} from './simulation.ts';
+import {AccessError} from './identity.ts';
+import type {IdentityStore,IdentityVerifier,Scope} from './identity.ts';
 const BODY_LIMIT=32768;
 class HttpError extends Error {status:number;constructor(status:number,message:string){super(message);this.status=status;}}
 function reply(res:ServerResponse,status:number,value:unknown) {res.writeHead(status,{'Content-Type':'application/json; charset=utf-8'});res.end(JSON.stringify(value));}
@@ -25,8 +27,8 @@ function cursor(value:unknown):number {
   if (typeof value !== 'string' || !/^(0|[1-9]\d{0,14})$/.test(value) || !Number.isSafeInteger(Number(value))) throw new HttpError(400,'Invalid cursor');
   return Number(value);
 }
-interface Subscriber {res:ServerResponse;cursor:number;lastHeartbeat:number}
-export function createApplication(store:WorkspaceStore,options:{frontendOrigin?:string;staticDir?:string;heartbeatMs?:number}={}) {
+interface Subscriber {res:ServerResponse;cursor:number;lastHeartbeat:number;workspaceId:string;token:string}
+export function createApplication(store:WorkspaceStore,options:{frontendOrigin?:string;staticDir?:string;heartbeatMs?:number;access?:{store:IdentityStore;verifier:IdentityVerifier}}={}) {
   if (options.frontendOrigin) {
     const origin=new URL(options.frontendOrigin);
     if (origin.protocol!=='http:' || !['localhost','127.0.0.1'].includes(origin.hostname) || origin.origin!==options.frontendOrigin) throw new Error('Frontend must use an exact loopback origin');
@@ -34,12 +36,13 @@ export function createApplication(store:WorkspaceStore,options:{frontendOrigin?:
   const subscribers=new Set<Subscriber>();
   const heartbeatMs=options.heartbeatMs??10000;
   if (!Number.isSafeInteger(heartbeatMs) || heartbeatMs<10 || heartbeatMs>30000) throw new Error('Invalid heartbeat interval');
-  const actor:ReviewPrincipal={id:'local-owner',workspaceId:DEMO_WORKSPACE,role:'owner'};
+  function authorize(token:string,scope:Scope){return options.access?.store.authorize(token,scope);}
   let timer:ReturnType<typeof setInterval>|null=null;
   function pump() {
     for (const client of subscribers) {
       try {
-        for (const raw of store.events(DEMO_WORKSPACE,client.cursor,100)) {
+        authorize(client.token,'workspace.read');
+        for (const raw of store.events(client.workspaceId,client.cursor,100)) {
           const event=parseActivity(raw);
           if (client.res.writableLength>65536 || !client.res.write(`id: ${event.cursor}\nevent: activity\ndata: ${JSON.stringify(event)}\n\n`)) {client.res.end();subscribers.delete(client);break;}
           client.cursor=event.cursor;
@@ -62,34 +65,58 @@ export function createApplication(store:WorkspaceStore,options:{frontendOrigin?:
       if (req.headers.origin && !allowedOrigins.has(req.headers.origin) || req.headers['sec-fetch-site']==='cross-site') throw new HttpError(403,'Origin rejected');
       const url=new URL(req.url??'/',`http://127.0.0.1:${port}`);
       if (req.method==='GET' && url.pathname==='/api/health') return reply(res,200,{ok:true,mode:'simulation',liveExecution:false});
-      if (req.method==='GET' && url.pathname==='/api/workspace') return reply(res,200,store.snapshot(DEMO_WORKSPACE));
-      if (req.method==='GET' && url.pathname==='/api/names') return reply(res,200,{catalog:approvedNames,...await readNameAvailability(null,'local-owner')});
+      const token=/^Bearer ([A-Za-z0-9_-]{43})$/.exec(req.headers.authorization??'')?.[1]??'';
+      const localMutation=()=>{if(!req.headers.origin||!allowedOrigins.has(req.headers.origin)||req.headers['x-prime-directive']!=='local-ui')throw new HttpError(403,'Local UI request required');};
+      if(options.access&&url.pathname==='/api/session'&&req.method==='POST'){
+        localMutation();const body=record(await jsonBody(req));exactKeys(body,['workspaceId']);
+        if(typeof body.workspaceId!=='string')throw new HttpError(400,'Workspace required');
+        const assertion=/^Bearer ([^\s]+)$/.exec(req.headers.authorization??'')?.[1]??'';
+        return reply(res,200,await options.access.store.exchange(options.access.verifier,assertion,body.workspaceId));
+      }
+      if(options.access&&url.pathname==='/api/session'&&req.method==='DELETE'){
+        localMutation();options.access.store.revokeSession(token);return reply(res,200,{revoked:true});
+      }
+      // The selected workspace and caller come exclusively from the verified session.
+      const principal=url.pathname.startsWith('/api/')?authorize(token,'workspace.read'):undefined;
+      const workspaceId=principal?.workspaceId??DEMO_WORKSPACE;
+      const actor:ReviewPrincipal={id:principal?.id??'local-owner',workspaceId,role:principal?.role==='owner'||!principal?'owner':'worker'};
+      if(options.access&&url.pathname==='/api/memberships'){
+        if(req.method==='GET')return reply(res,200,{memberships:options.access.store.memberships(token)});
+        if(req.method==='POST'){
+          localMutation();const body=record(await jsonBody(req));exactKeys(body,['principalId','role','kind','expectedRevision','active','scopes','expiresAt','delegated']);
+          return reply(res,200,options.access.store.setMembership(token,body as unknown as Parameters<IdentityStore['setMembership']>[1]));
+        }
+      }
+      if (req.method==='GET' && url.pathname==='/api/workspace') return reply(res,200,store.snapshot(workspaceId));
+      if (req.method==='GET' && url.pathname==='/api/names') return reply(res,200,{catalog:approvedNames,...await readNameAvailability(null,actor.id)});
       if (req.method==='GET' && url.pathname==='/api/activity') {
         if(url.searchParams.has('recent')){
           if(url.searchParams.get('recent')!=='1'||url.searchParams.has('after'))throw new HttpError(400,'Invalid history mode');
           const through=cursor(url.searchParams.get('through'));
-          if(through>store.snapshot(DEMO_WORKSPACE).cursor)throw new HttpError(409,'History cursor is ahead of the workspace');
-          return reply(res,200,{events:store.recentEvents(DEMO_WORKSPACE,through,100)});
+          if(through>store.snapshot(workspaceId).cursor)throw new HttpError(409,'History cursor is ahead of the workspace');
+          return reply(res,200,{events:store.recentEvents(workspaceId,through,100)});
         }
         if(url.searchParams.has('through'))throw new HttpError(400,'History mode required');
-        return reply(res,200,{events:store.events(DEMO_WORKSPACE,cursor(url.searchParams.get('after')??'0'),100)});
+        return reply(res,200,{events:store.events(workspaceId,cursor(url.searchParams.get('after')??'0'),100)});
       }
       if (req.method==='GET' && url.pathname==='/api/events') {
         if(subscribers.size>=8)throw new HttpError(429,'Too many event subscribers');
         const after=cursor(req.headers['last-event-id']??url.searchParams.get('after')??'0');
-        if(after>store.snapshot(DEMO_WORKSPACE).cursor)throw new HttpError(409,'Cursor is ahead of the workspace; fetch a fresh snapshot');
+        if(after>store.snapshot(workspaceId).cursor)throw new HttpError(409,'Cursor is ahead of the workspace; fetch a fresh snapshot');
         res.writeHead(200,{'Content-Type':'text/event-stream','Connection':'keep-alive','X-Accel-Buffering':'no'});res.flushHeaders();
-        const client={res,cursor:after,lastHeartbeat:0};subscribers.add(client);
+        const client={res,cursor:after,lastHeartbeat:0,workspaceId,token};subscribers.add(client);
         res.on('close',() => subscribers.delete(client));pump();return;
       }
       const experiencePath=url.pathname.match(/^\/api\/workers\/([A-Za-z0-9_.:-]+)\/experience$/);
       if (req.method==='GET' && experiencePath) {
-        const experience=store.experience(DEMO_WORKSPACE,experiencePath[1]);
-        return reply(res,200,{experience,summary:summarizeExperience(experience),lessons:store.lessons(DEMO_WORKSPACE,experiencePath[1],{'demo-source':1})});
+        const experience=store.experience(workspaceId,experiencePath[1]);
+        return reply(res,200,{experience,summary:summarizeExperience(experience),lessons:store.lessons(workspaceId,experiencePath[1],{'demo-source':1})});
       }
       if (req.method==='POST' && url.pathname==='/api/commands') {
         if (!req.headers.origin || !allowedOrigins.has(req.headers.origin) || req.headers['x-prime-directive']!=='local-ui') throw new HttpError(403,'Local UI request required');
         const body=record(await jsonBody(req));let result:unknown;
+        // Recheck after async body parsing: membership may have been revoked meanwhile.
+        authorize(token,['evaluate','reviewLesson','revokeExperience'].includes(String(body.type))?'experience.review':'work.write');
         const fields:Record<string,string[]>={step:['type'],assign:['type','workerId','taskId','revision'],advance:['type','workerId','revision'],
           pause:['type','workerId'],resume:['type','workerId'],retire:['type','workerId'],createWorker:['type','label','specialty'],
           evaluate:['type','workerId','evaluation'],reviewLesson:['type','workerId','experienceId','decision'],revokeExperience:['type','workerId','experienceId']};
@@ -100,18 +127,18 @@ export function createApplication(store:WorkspaceStore,options:{frontendOrigin?:
         if (fields[body.type].includes('experienceId') && !validId(body.experienceId)) throw new HttpError(400,'Invalid experience ID');
         const workerId=body.workerId as string;
         switch(body.type) {
-          case 'step':result=stepSimulation(store);break;
-          case 'assign':if(!validId(body.taskId))throw new HttpError(400,'Invalid task');result=store.assign(DEMO_WORKSPACE,workerId,body.taskId,Number(body.revision));break;
-          case 'advance':result=store.advanceSimulation(DEMO_WORKSPACE,workerId,Number(body.revision));break;
-          case 'pause':result=store.pauseWorker(DEMO_WORKSPACE,workerId,true);break;
-          case 'resume':result=store.pauseWorker(DEMO_WORKSPACE,workerId,false);break;
-          case 'retire':result=store.retireWorker(DEMO_WORKSPACE,workerId);break;
-          case 'createWorker':requireText(body.label,80,'label');requireText(body.specialty,80,'specialty');result=store.createSimulationWorker(DEMO_WORKSPACE,body.label,body.specialty);break;
-          case 'evaluate':result=store.recordEvaluation(DEMO_WORKSPACE,workerId,body.evaluation,actor);break;
-          case 'reviewLesson':if(body.decision!=='approved'&&body.decision!=='revoked')throw new HttpError(400,'Invalid decision');result=store.reviewLesson(DEMO_WORKSPACE,workerId,body.experienceId as string,body.decision,actor);break;
-          case 'revokeExperience':result=store.revokeExperience(DEMO_WORKSPACE,workerId,body.experienceId as string,actor);break;
+          case 'step':if(workspaceId!==DEMO_WORKSPACE)throw new HttpError(409,'Simulation step is limited to the demo workspace');result=stepSimulation(store);break;
+          case 'assign':if(!validId(body.taskId))throw new HttpError(400,'Invalid task');result=store.assign(workspaceId,workerId,body.taskId,Number(body.revision));break;
+          case 'advance':result=store.advanceSimulation(workspaceId,workerId,Number(body.revision));break;
+          case 'pause':result=store.pauseWorker(workspaceId,workerId,true);break;
+          case 'resume':result=store.pauseWorker(workspaceId,workerId,false);break;
+          case 'retire':result=store.retireWorker(workspaceId,workerId);break;
+          case 'createWorker':requireText(body.label,80,'label');requireText(body.specialty,80,'specialty');result=store.createSimulationWorker(workspaceId,body.label,body.specialty);break;
+          case 'evaluate':result=store.recordEvaluation(workspaceId,workerId,body.evaluation,actor);break;
+          case 'reviewLesson':if(body.decision!=='approved'&&body.decision!=='revoked')throw new HttpError(400,'Invalid decision');result=store.reviewLesson(workspaceId,workerId,body.experienceId as string,body.decision,actor);break;
+          case 'revokeExperience':result=store.revokeExperience(workspaceId,workerId,body.experienceId as string,actor);break;
         }
-        pump();return reply(res,200,{result,snapshot:store.snapshot(DEMO_WORKSPACE)});
+        pump();return reply(res,200,{result,snapshot:store.snapshot(workspaceId)});
       }
       if (req.method==='GET' && !url.pathname.startsWith('/api/') && options.staticDir) {
         const root=resolve(options.staticDir),path=resolve(root,'.'+decodeURIComponent(url.pathname==='/'?'/index.html':url.pathname));
@@ -124,7 +151,7 @@ export function createApplication(store:WorkspaceStore,options:{frontendOrigin?:
     } catch(error) {
       if(res.headersSent){res.end();return;}
       const domainStatus:Record<string,number>={forbidden:403,not_found:404,conflict:409,blocked:409,transition:409};
-      const status=error instanceof HttpError ? error.status : error instanceof DomainError ? (domainStatus[error.code]??400) : 500;
+      const status=error instanceof HttpError || error instanceof AccessError ? error.status : error instanceof DomainError ? (domainStatus[error.code]??400) : 500;
       if(status===413){res.setHeader('Connection','close');res.once('finish',() => req.destroy());}
       reply(res,status,{error:status===500?'Local service could not complete the request':(error as Error).message});
     }
@@ -134,3 +161,4 @@ export function createApplication(store:WorkspaceStore,options:{frontendOrigin?:
   server.on('close',() => {if(timer)clearInterval(timer);});
   return {server,close:async() => {if(timer)clearInterval(timer);for(const c of subscribers)c.res.end();subscribers.clear();server.closeAllConnections();await new Promise<void>((resolveClose,reject) => server.close(error => error?reject(error):resolveClose()));}};
 }
+
